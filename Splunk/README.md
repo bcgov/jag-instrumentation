@@ -5,12 +5,10 @@
     .
     ├── ceis                # ceis splunk configs,  queries and cies architecture.
     |   ├── configs         # splunk configs
-    |   ├── queries         # splunk queries
-    |   └── architecture    # cies architecture.              
+    |   └── queries         # splunk queries            
     |── ecm                 # ecm splunk configs, dashboard queries and architecture.
     |   ├── configs         # splunk configs
-    |   ├── queries         # splunk queries
-    |   └── architecture    # ecm architecture.   
+    |   └── queries         # splunk queries 
     └── app                 # splunk config generator
 
 ## Architecture
