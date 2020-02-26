@@ -12,3 +12,19 @@
     |   ├── queries         # splunk queries
     |   └── architecture    # ecm architecture.   
     └── app                 # splunk config generator
+
+## Architecture
+
+### CIES & Host Names
+
+https://justice.gov.bc.ca/wiki/display/monitor/CEIS+Architecture+Diagrams
+
+
+### ECM & Host Names
+
+https://justice.gov.bc.ca/wiki/display/monitor/ECM+PaaS+Monitoring
+
+
+#### ECM Performance Counters
+
+https://justice.gov.bc.ca/wiki/display/monitor/Performance+Counters
