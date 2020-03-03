@@ -1,0 +1,199 @@
+<form theme="dark">
+  <search id="oracleFormsAccessCombined">
+    <query>
+index=prod_oracleforms sourcetype=access_combined host IN($selectedHost$) $selectedApplication$
+| `massageCombinedAccess`
+| eval uniqueSession=(jsessionToken.":".jsessionNumber.":".jsessionConfig) 
+| streamstats
+  min(_time) as start
+  max(_time) as end
+  by uniqueSession
+| eval duration=(end-start)
+| eval ip=addressA
+| lookup ceisHostLookup.csv ip output hostname AS hostA
+| eval ip=addressB
+| lookup ceisHostLookup.csv ip output hostname AS hostB
+| eval internal=if((isnotnull(hostA) and isnotnull(hostB)),"true","false")
+| eval hostA=if(isnull(hostA),addressA,hostA)
+| eval hostB=if(isnull(hostB),addressB,hostB)
+| eval status=protocolReturnCode
+| lookup httpStatusCodes.csv status output status_description status_type
+    </query>
+    <earliest>$selectedTimeFrame.earliest$</earliest>
+    <latest>$selectedTimeFrame.latest$</latest>
+  </search>
+  <label>CEIS - Oracle Forms Web Performance</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="selectedTimeFrame" searchWhenChanged="true">
+      <label>Select a timeframe:</label>
+      <default>
+        <earliest>-15m</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="dropdown" token="selectedHost" searchWhenChanged="true">
+      <label>Select host(s):</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <fieldForLabel>hostName</fieldForLabel>
+      <fieldForValue>host</fieldForValue>
+      <search>
+        <query>
+index=prod_oracleforms sourcetype=access_combined 
+| dedup host
+| eval targetField=host
+| eval tempField = lower(targetField) 
+| makemv delim=" " tempField
+| mvexpand tempField
+| eval A = substr(tempField, 1, 1) 
+| eval B = substr(tempField,2) 
+| eval A = upper(A) 
+| eval tempField = A.B 
+| mvcombine tempField
+| eval tempField = mvjoin(tempField, " ")
+| eval hostName=tempField
+| fields - tempField, A, B 
+| table host hostName
+        </query>
+        <earliest>$selectedTimeFrame.earliest$</earliest>
+        <latest>$selectedTimeFrame.latest$</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="selectedApplication" searchWhenChanged="true">
+      <label>Select an application:</label>
+      <choice value="&quot;config=*&quot;">All</choice>
+      <choice value="NOT &quot;config=*&quot;">None/Errors</choice>
+      <choice value="&quot;config=ceis*&quot;">CEIS</choice>
+      <choice value="&quot;config=cms*&quot;">CMS</choice>
+      <choice value="&quot;config=dfcms*&quot;">DFCMS</choice>
+      <choice value="&quot;config=elvis*">ELVIS</choice>
+      <choice value="&quot;config=figaro*&quot;">FIGARO</choice>
+      <choice value="&quot;config=fis2*&quot;">FIS2</choice>
+      <choice value="&quot;config=justin*&quot;">JUSTIN</choice>
+      <choice value="&quot;config=scms*&quot;">SCMS</choice>
+      <choice value="&quot;config=tosca*&quot;">TOSCA</choice>
+      <default>"config=ceis*"</default>
+      <initialValue>"config=ceis*"</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <title>Oracle Forms - Transaction Processing Time</title>
+        <search base="oracleFormsAccessCombined">
+          <query>| transaction jsessionid maxspan=60s maxpause=1s
+| eventstats 
+  values(host) as hosts
+  earliest(_time) as transactionStartTime
+  latest(_time) as transactionEndTime
+  dc(_raw) as linesInTransaction
+  by jsessionid
+| eval uniqueTransaction=jsessionid.":".transactionStartTime
+| eval transactionDuration=transactionEndTime-transactionStartTime
+| timechart 
+  max(duration) as maxDuration
+  avg(duration) as avgDuration
+| rename 
+  maxDuration as "Max Tx Duration"
+  avgDuration as "Avg Tx Duration"
+| eval Threshold=60</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">collapsed</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.overlayFields">Threshold</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Oracle Forms - Session Activity</title>
+        <search base="oracleFormsAccessCombined">
+          <query>
+| eval connectionConfig=replace(jsessionConfig,"_prod","")
+| eval connectionConfig=upper(replace(connectionConfig,"_"," "))
+| timechart
+  dc(uniqueSession) as uniqueSessions
+  by connectionConfig
+  useother=false
+  usenull=false
+        </query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Oracle Forms - HTTP Status by Transaction</title>
+        <search base="oracleFormsAccessCombined">
+          <query>
+| timechart 
+  count
+  by status_description
+        </query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+      <table>
+        <title>Oracle Forms - Session Parsing</title>
+        <search base="oracleFormsAccessCombined">
+          <query>
+| table hostA hostB status_description jsessionConfig
+| rename
+  hostA as Server
+  hostB as Client
+  jsessionConfig as Service
+  status_description as "HTTP Status"
+        </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+</form>
