@@ -1,0 +1,16 @@
+version: '3.5'
+services:
+  splunk:
+    image: store/oracle/serverjre:8
+    container_name: splunk_dbconnect
+    restart: always
+    build:
+      context: .
+      dockerfile: splunk_dbconnect.dockerfile
+      network: host
+    ports:
+      - "3000:3000"
+      - "8443:8443"
+      - "8000:8000"
+      - "8089:8089"
+      - "9000:9000"
