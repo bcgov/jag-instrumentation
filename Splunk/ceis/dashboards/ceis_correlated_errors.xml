@@ -1,0 +1,34 @@
+<form theme="dark">
+  <label>CEIS Correlated Errors</label>
+  <row>
+    <panel>
+      <title>Logs</title>
+      <event>
+        <search>
+          <query>(sourcetype IN ("access_combined" "access_combined_wcookie") index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") status&gt;=500) OR 
+    (sourcetype="apache_error" index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") "error") OR 
+    (sourcetype IN ("access_combined" "access_combined_wcookie") index="prod_oracleforms" AND host IN ("bert", "orkney", "stubble", "williams") protocolReturnCode&gt;=500) OR 
+    (sourcetype="alert_prdj" index="prod_database" AND host IN ("pulsar" "preon" "neutron") tag="error" AND ("err" OR "timeout")) OR 
+    (sourcetype="access_log-too_small" index="prod_web" AND host IN ("aem1.bcgov" "aem2.bcgov") AND (status&gt;=500 OR time4request&gt;=190000000)) OR 
+    (sourcetype="server" index="prod_web" AND host IN ("aem1.bcgov" "aem2.bcgov") AND ("error" OR "err" OR "timeout")) OR
+    (sourcetype IN ("phis-too_small", "pacws-too_small", "fams-too_small", "iris-2", "iris-too_small") index="prod_jboss" AND host IN ("hitch.bcgov", "saute.bcgov", "poach.bcgov", "stirfry.bcgov") ("error" OR "err" OR "timeout")) OR 
+    (sourcetype IN ("ecrc-too_small" "lra-too_small") index="prod_jboss" AND host IN ("glaze.dmz", "mince.dmz") ("error" OR "err" OR "timeout")) OR
+    (sourcetype IN ("access_combined" "access_combined_wcookie") index="prod_web" AND host IN ("churn.bcgov", "parch.bcgov") status&gt;=500)</query>
+          <earliest>$form.earliest$</earliest>
+          <latest>$form.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="list.wrap">1</option>
+        <option name="maxLines">5</option>
+        <option name="raw.drilldown">full</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">0</option>
+        <option name="table.drilldown">all</option>
+        <option name="table.sortDirection">asc</option>
+        <option name="table.wrap">1</option>
+        <option name="type">list</option>
+      </event>
+    </panel>
+  </row>
+</form>

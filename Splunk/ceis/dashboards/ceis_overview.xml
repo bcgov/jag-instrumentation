@@ -371,7 +371,13 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
         <drilldown>
-          <link target="_blank">/app/search/report?s=CEIS%20Correlate%20errors</link>
+          <eval token="earliest_time">relative_time($click.value$, "-2s")</eval>
+          <eval token="latest_time">relative_time($click.value$, "+1s")</eval>
+          <link target="_blank">
+            <![CDATA[
+              /app/search/ceis_correlated_errors?form.earliest=$earliest_time$&form.latest=$latest_time$
+            ]]>
+          </link>
         </drilldown>
       </table>
     </panel>
