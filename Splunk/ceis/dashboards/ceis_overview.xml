@@ -1,0 +1,379 @@
+<form theme="dark">
+  <search id="systemPerformance">
+    <query>
+index="main" host IN ("stew.bcgov" "seethe.bcgov" "simmer.bcgov" "bert" "stubble" "orkney" "williams" "neutron" "preon" "pulsar" "aem1.bcgov" "aem2.bcgov") AND source IN ("cpu" "vmstat") AND sourcetype IN ("cpu" "vmstat") 
+| eval serverScope=case(
+  (host="stew.bcgov" OR host="seethe.bcgov" OR host="simmer.bcgov"),"Proxy",
+  (host="bert" OR host="stubble" OR host="orkney" OR host="williams"),"Oracle Forms",
+  (host="neutron" OR host="preon" OR host="pulsar"),"Oracle DB/Store",
+  (host="aem1.bcgov" OR host="aem2.bcgov"),"Adobe Experience Management",
+  1=1,NULL())
+| fields *
+    </query>
+    <earliest>$ceisOverviewTimePicker.earliest$</earliest>
+    <latest>$ceisOverviewTimePicker.latest$</latest>
+  </search>
+  <search id="proxyLogs">
+    <query>
+sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") status&gt;=500 AND NOT ($noiseFilter$)
+| lookup httpStatusCodes.csv status AS status output status_description
+| `massageCombinedAccess` 
+| eval jsessionConfig=if(like(actionPath, "/dars/%"), "/dars", jsessionConfig) 
+| eval jsessionConfig=if(like(actionPath, "/jpac/%"), "/jpac", jsessionConfig) 
+| eval jsessionConfig=if(like(actionPath, "/dps/%"), "/dps", jsessionConfig) 
+| eval jsessionConfig=if(like(actionPath, "/ords/%"), "/ords", jsessionConfig) 
+| fields * 
+    </query>
+    <earliest>$ceisOverviewTimePicker.earliest$</earliest>
+    <latest>$ceisOverviewTimePicker.latest$</latest>
+  </search>
+  <label>CEIS Overview</label>
+  <fieldset submitButton="false">
+    <input type="time" token="ceisOverviewTimePicker">
+      <label>Time Range</label>
+      <default>
+        <earliest>-60m@m</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="checkbox" token="noiseFilter" searchWhenChanged="true">
+      <label>Noise Filter: Exclued from search</label>
+      <choice value="&quot;GET /ipp/ValidationLogin.aspx HTTP/1.1&quot;">"GET /ipp/ValidationLogin.aspx HTTP/1.1"</choice>
+      <choice value="&quot;OPTIONS /11gforms/web/modplsql/appl6prda/ HTTP/1.1&quot; OR &quot;OPTIONS /11gforms/web/modplsql/appl6prda HTTP/1.1&quot;">"OPTIONS /11gforms/web/modplsql/appl6prda{,/} HTTP/1.1"</choice>
+      <default>"""GET /ipp/ValidationLogin.aspx HTTP/1.1"""</default>
+      <initialValue>GET /ipp/ValidationLogin.aspx HTTP/1.1</initialValue>
+      <delimiter> OR </delimiter>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>CEIS Correlated Resource Usage</title>
+      <chart>
+        <search base="systemPerformance">
+          <query>
+
+| timechart
+  span=60sec
+  max(cpu_load_percent) as CPU
+  max(memUsedPct) as MEM
+  max(pctIowait) as IO
+  by serverScope</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.maximumNumber">100</option>
+        <option name="charting.axisY.minimumNumber">0</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.maximumNumber">100</option>
+        <option name="charting.axisY2.minimumNumber">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.overlayFields">"CPU: Adobe Experience Management","CPU: Oracle DB/Store","CPU: Oracle Forms","CPU: Proxy","MEM: Adobe Experience Management","MEM: Oracle DB/Store","MEM: Oracle Forms","MEM: Proxy"</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">large</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Errors by Status Code</title>
+      <chart>
+        <search base="proxyLogs">
+          <query>
+| timechart span=60s count by status_description</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Errors by application</title>
+      <chart>
+        <search base="proxyLogs">
+          <query>
+| timechart span=60s count by jsessionConfig</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trellis.splitBy">jsessionConfig</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Total errors</title>
+      <single>
+        <search base="proxyLogs">
+          <query>
+| stats count</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="height">252</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Total Errors - Hourly Trend</title>
+      <single>
+        <search base="proxyLogs">
+          <query>
+| timechart span=1h count</query>
+        </search>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="height">252</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">inverse</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="trendInterval">auto</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Errors by Status Code</title>
+      <chart>
+        <search base="proxyLogs">
+          <query>
+| stats count as numberOfErrors by status_description | sort -numberOfErrors</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Errors by application</title>
+      <chart>
+        <search base="proxyLogs">
+          <query>
+| stats count as numberOfErrors by status_description,jsessionConfig | sort -numberOfErrors</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">collapsed</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">1</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Request Times</title>
+      <chart>
+        <search>
+          <query>sourcetype="access_combined_wcookie" index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") other&gt;190000000 
+| `massageCombinedAccess` 
+| eval jsessionConfig=if(like(actionPath, "/dars/%"), "/dars", jsessionConfig) 
+| eval jsessionConfig=if(like(actionPath, "/jpac/%"), "/jpac", jsessionConfig) 
+| eval jsessionConfig=if(like(actionPath, "/dps/%"), "/dps", jsessionConfig) 
+| eval jsessionConfig=if(like(actionPath, "/ords/%"), "/ords", jsessionConfig) 
+| eval timeTaken4Request=(other/1000000) 
+| fields * 
+| timechart span=60s max(timeTaken4Request) as MaxTime by jsessionConfig 
+| eval Thrushold=120</query>
+          <earliest>$ceisOverviewTimePicker.earliest$</earliest>
+          <latest>$ceisOverviewTimePicker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Error logs</title>
+      <table>
+        <search base="proxyLogs">
+          <query>
+| table _time, clientip, status_description, status, method, jsessionConfig, jsessionNumber, _raw</query>
+        </search>
+        <option name="count">5</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">row</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <drilldown>
+          <link target="_blank">/app/search/report?s=CEIS%20Correlate%20errors</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+</form>
