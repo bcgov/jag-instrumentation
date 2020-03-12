@@ -38,4 +38,4 @@ def create_file(content):
     f.write(content)
 
 # interval can be passed as parameter
-create_file(extract_perfmon(30))
+create_file(extract_perfmon(60))
