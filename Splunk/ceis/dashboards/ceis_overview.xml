@@ -15,13 +15,14 @@ index="main" host IN ("stew.bcgov" "seethe.bcgov" "simmer.bcgov" "bert" "stubble
   </search>
   <search id="proxyLogs">
     <query>
-sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") status&gt;=500 AND NOT ($noiseFilter$)
+sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") $form.filterInclude$ status&gt;=500 AND NOT ($form.filterExclude$)
 | lookup httpStatusCodes.csv status AS status output status_description
 | `massageCombinedAccess` 
 | eval jsessionConfig=if(like(actionPath, "/dars/%"), "/dars", jsessionConfig) 
 | eval jsessionConfig=if(like(actionPath, "/jpac/%"), "/jpac", jsessionConfig) 
 | eval jsessionConfig=if(like(actionPath, "/dps/%"), "/dps", jsessionConfig) 
 | eval jsessionConfig=if(like(actionPath, "/ords/%"), "/ords", jsessionConfig) 
+| eval rich_status_description = status_description + " (" + status + ")" 
 | fields * 
     </query>
     <earliest>$ceisOverviewTimePicker.earliest$</earliest>
@@ -36,13 +37,13 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <latest>now</latest>
       </default>
     </input>
-    <input type="checkbox" token="noiseFilter" searchWhenChanged="true">
-      <label>Noise Filter: Exclued from search</label>
-      <choice value="&quot;GET /ipp/ValidationLogin.aspx HTTP/1.1&quot;">"GET /ipp/ValidationLogin.aspx HTTP/1.1"</choice>
-      <choice value="&quot;OPTIONS /11gforms/web/modplsql/appl6prda/ HTTP/1.1&quot; OR &quot;OPTIONS /11gforms/web/modplsql/appl6prda HTTP/1.1&quot;">"OPTIONS /11gforms/web/modplsql/appl6prda{,/} HTTP/1.1"</choice>
-      <default>"""GET /ipp/ValidationLogin.aspx HTTP/1.1"""</default>
-      <initialValue>GET /ipp/ValidationLogin.aspx HTTP/1.1</initialValue>
-      <delimiter> OR </delimiter>
+    <input type="text" token="filterExclude" searchWhenChanged="true">
+      <label>Filter: Exclued from search</label>
+      <default>"GET /ipp/ValidationLogin.aspx HTTP/1.1" OR "OPTIONS /11gforms/web/modplsql/appl6prda/ HTTP/1.1" OR "OPTIONS /11gforms/web/modplsql/appl6prda HTTP/1.1"</default>
+    </input>
+    <input type="text" token="filterInclude" searchWhenChanged="true">
+      <label>Filter: Inclued in search</label>
+      <default></default>
     </input>
   </fieldset>
   <row>
@@ -105,7 +106,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
       <chart>
         <search base="proxyLogs">
           <query>
-| timechart span=60s count by status_description</query>
+| timechart span=60s count by rich_status_description</query>
         </search>
         <option name="charting.axisTitleX.visibility">collapsed</option>
         <option name="charting.axisTitleY.visibility">collapsed</option>
@@ -221,7 +222,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
       <chart>
         <search base="proxyLogs">
           <query>
-| stats count as numberOfErrors by status_description | sort -numberOfErrors</query>
+| stats count as numberOfErrors by rich_status_description | sort -numberOfErrors</query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
@@ -244,7 +245,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">default</option>
         <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">none</option>
+        <option name="charting.drilldown">all</option>
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
@@ -255,6 +256,11 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
+        <drilldown>
+          <!-- <eval token="statusCode">substr($click.value$,-4,3)</eval> -->
+          <eval token="filterInclude">"status=" + substr($click.value$,-4,3) + " " + $form.filterInclude$</eval>
+          <link target="_blank">/app/search/ceis_overview?form.filterInclude=$filterInclude$&amp;form.ceisOverviewTimePicker.earliest=$earliest$&amp;form.ceisOverviewTimePicker.latest=$latest$&amp;form.filterExclude=$form.filterExclude$</link>
+        </drilldown>
       </chart>
     </panel>
   </row>
@@ -264,7 +270,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
       <chart>
         <search base="proxyLogs">
           <query>
-| stats count as numberOfErrors by status_description,jsessionConfig | sort -numberOfErrors</query>
+| stats count as numberOfErrors by rich_status_description,jsessionConfig | sort -numberOfErrors</query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
@@ -287,7 +293,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">default</option>
         <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">none</option>
+        <option name="charting.drilldown">all</option>
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
@@ -296,8 +302,13 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="charting.lineWidth">2</option>
         <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">1</option>
-        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.scales.shared">0</option>
         <option name="trellis.size">medium</option>
+        <drilldown>
+          <!-- <eval token="statusCode">substr($trellis.value$,-4,3)</eval> -->
+          <eval token="filterInclude">"status=" + substr($trellis.value$,-4,3) + " \"" + $click.value$ + "\" " + $form.filterInclude$ </eval>
+          <link target="_blank">/app/search/ceis_overview?form.filterInclude=$filterInclude$&amp;form.ceisOverviewTimePicker.earliest=$earliest$&amp;form.ceisOverviewTimePicker.latest=$latest$&amp;form.filterExclude=$form.filterExclude$</link>
+        </drilldown>
       </chart>
     </panel>
   </row>
@@ -361,7 +372,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
       <table>
         <search base="proxyLogs">
           <query>
-| table _time, clientip, status_description, status, method, jsessionConfig, jsessionNumber, _raw</query>
+| table _time, clientip, rich_status_description, status, method, jsessionConfig, jsessionNumber, _raw</query>
         </search>
         <option name="count">5</option>
         <option name="dataOverlayMode">none</option>
@@ -375,7 +386,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
           <eval token="latest_time">relative_time($click.value$, "+1s")</eval>
           <link target="_blank">
             <![CDATA[
-              /app/search/ceis_correlated_errors?form.earliest=$earliest_time$&form.latest=$latest_time$
+              /app/search/ceis_correlated_errors?form.timeRange.earliest=$earliest_time$&form.timeRange.latest=$latest_time$
             ]]>
           </link>
         </drilldown>
