@@ -1,5 +1,14 @@
 <form theme="dark">
   <label>CEIS Correlated Errors</label>
+  <fieldset submitButton="false">
+    <input type="time" token="timeRange" searchWhenChanged="true">
+      <label>Time Range</label>
+      <default>
+        <earliest>-5m</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
   <row>
     <panel>
       <title>Logs</title>
@@ -14,8 +23,8 @@
     (sourcetype IN ("phis-too_small", "pacws-too_small", "fams-too_small", "iris-2", "iris-too_small") index="prod_jboss" AND host IN ("hitch.bcgov", "saute.bcgov", "poach.bcgov", "stirfry.bcgov") ("error" OR "err" OR "timeout")) OR 
     (sourcetype IN ("ecrc-too_small" "lra-too_small") index="prod_jboss" AND host IN ("glaze.dmz", "mince.dmz") ("error" OR "err" OR "timeout")) OR
     (sourcetype IN ("access_combined" "access_combined_wcookie") index="prod_web" AND host IN ("churn.bcgov", "parch.bcgov") status&gt;=500)</query>
-          <earliest>$form.earliest$</earliest>
-          <latest>$form.latest$</latest>
+          <earliest>$timeRange.earliest$</earliest>
+          <latest>$timeRange.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="list.drilldown">none</option>
