@@ -1,7 +1,7 @@
 <form theme="dark">
   <search id="systemPerformance">
     <query>
-index=main host IN ($selectedHost$) AND source IN (cpu vmstat) AND sourcetype IN (cpu vmstat)
+index="main" host IN ($selectedHost$) AND source IN ("cpu" "vmstat") AND sourcetype IN ("cpu" "vmstat")
 | fields *
     </query>
     <earliest>$ceis_time_range.earliest$</earliest>
@@ -9,14 +9,14 @@ index=main host IN ($selectedHost$) AND source IN (cpu vmstat) AND sourcetype IN
   </search>
   <search id="webPerformance">
     <query>
-index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access_log" sourcetype=access_combined 
+index="prod_web" host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access_log" sourcetype="access_combined" OR sourcetype="access_combined_wcookie"
 | dedup _time host
 | fields *
     </query>
     <earliest>$ceis_time_range.earliest$</earliest>
     <latest>$ceis_time_range.latest$</latest>
   </search>
-  <label>CEIS - Proxy Monitoring</label>
+  <label>CEIS - Proxy &amp; Server Monitoring</label>
   <fieldset submitButton="false" autoRun="true">
     <input type="time" token="ceis_time_range" searchWhenChanged="true">
       <label>Time range</label>
@@ -38,22 +38,19 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
     <panel>
       <single>
         <search>
-          <query>
-| makeresults 
-| eval title="System Performance Indicators" 
+          <query>| makeresults 
+| eval title="Proxy Server Performance Indicators" 
 | eval colorCode=1
 | stats values(colorCode) as colorCode by title
-| eval range=if(isnotnull(title),"low","severe")
-          </query>
+| eval range="guarded"</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>
-        <option name="colorBy">value</option>
         <option name="colorMode">block</option>
         <option name="drilldown">none</option>
-        <option name="field">title</option>
-        <option name="height">68</option>
-        <option name="rangeColors">["0x325b99","0x3c444d","0x3c444d","0x3c444d","0x3c444d"]</option>
+        <option name="height">55</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
         <option name="useColors">0</option>
       </single>
     </panel>
@@ -66,10 +63,9 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <search base="systemPerformance">
           <query>
 | timechart
-  avg(cpu_load_percent) as Load
+  max(cpu_load_percent) as Load
   by host
-| eval Threshold=50
-          </query>
+| eval Threshold=50</query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
@@ -111,12 +107,11 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <search base="systemPerformance">
           <query>
 | timechart 
-  avg(memUsedPct) as Memory
-  avg(swapUsedPct) as Swap
+  max(memUsedPct) as Memory
+  max(swapUsedPct) as Swap
   by host
   span=30s
-| eval Thresold=50
-          </query>
+| eval Thresold=50</query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
@@ -158,7 +153,7 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <search base="systemPerformance">
           <query>
 | timechart 
-  avg(pctIowait) as "I/O wait"
+  max(pctIowait) as "I/O wait"
   by host
   span=30s
 | eval Threshold=10
@@ -205,12 +200,76 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
     <panel>
       <single>
         <search>
+          <query>| makeresults 
+| eval title="System and Network Correlation" 
+| eval colorCode=1
+| stats values(colorCode) as colorCode by title
+| eval range="guarded"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="field">title</option>
+        <option name="height">55</option>
+        <option name="rangeColors">["0x325b99","0x3c444d","0x3c444d","0x3c444d","0x3c444d"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="useColors">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Resources vs Transaction Duration &amp; Errors</title>
+      <viz type="Splunk_ML_Toolkit.LinesViz">
+        <search base="webPerformance">
+          <query>
+| eval timeTaken4Request=(other/1000000)
+| eval config=if((isnull(config) AND (status &gt; 399)),status,config)
+| timechart 
+    span=60s
+    max(timeTaken4Request) as MaxTime
+    by config
+    useother=false
+    usenull=false
+| rename config as Application
+| appendcols [
+  search index="main" host IN ( $selectedHost$ "bert" "stubble" "orkney" "williams" "neutron" "preon" "pulsar" "aem1.bcgov" "aem2.bcgov") AND source IN ("cpu" "vmstat") AND sourcetype IN ("cpu" "vmstat") 
+| eval serverScope=case(
+  (host="stew.bcgov" OR host="seethe.bcgov" OR host="simmer.bcgov"),"Proxy",
+  (host="bert" OR host="stubble" OR host="orkney" OR host="williams"),"Oracle Forms",
+  (host="neutron" OR host="preon" OR host="pulsar"),"Oracle DB/Store",
+  (host="aem1.bcgov" OR host="aem2.bcgov"),"Adobe Experience Management",
+  1=1,NULL())
+| timechart
+  span=60s
+  max(cpu_load_percent) as CPU
+  max(memUsedPct) as MEM
+  max(pctIowait) as IO
+  by serverScope
+]
+            </query>
+        </search>
+        <option name="Splunk_ML_Toolkit.LinesViz.showNavigator">true</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <single>
+        <search>
           <query>
 | makeresults 
 | eval title="Proxy Performance Indicators" 
 | eval colorCode=0
 | stats values(colorCode) as colorCode by title
-| eval range=if(isnotnull(title),"low","severe")
+| eval range="guarded"
           </query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
@@ -221,7 +280,7 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <option name="rangeColors">["0x325b99","0x325b99"]</option>
         <option name="refresh.display">progressbar</option>
         <option name="useColors">0</option>
-        <option name="height">68</option>
+        <option name="height">55</option>
       </single>
     </panel>
   </row>
@@ -357,7 +416,6 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <title>Requests</title>
         <search base="webPerformance">
           <query>
-| `massageCombinedAccess` 
 | top useragent limit=10
           </query>
         </search>
@@ -399,7 +457,6 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <title>Clients</title>
         <search base="webPerformance">
           <query>
-| `massageCombinedAccess` 
 | stats dc(clientip) as clientIPs by useragent 
 | sort 10 -clientIPs
         </query>
@@ -471,8 +528,7 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <title>Requests</title>
         <search base="webPerformance">
           <query>
-| `massageCombinedAccess` 
-| top jsessionConfig limit=10
+| top config limit=10
           </query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -513,8 +569,7 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <title>Data</title>
         <search base="webPerformance">
           <query>
-| `massageCombinedAccess`
-| stats sum(bytes) as totalBytes by jsessionConfig 
+| stats sum(bytes) as totalBytes by config
 | sort 10 -totalBytes
           </query>
         </search>
@@ -758,7 +813,6 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <title>All</title>
         <search base="webPerformance">
           <query>
-| `massageCombinedAccess` 
 | lookup httpStatusCodes.csv status output status_description status_type
 | stats count by status_description
           </query>
@@ -800,7 +854,6 @@ index=prod_web host IN ($selectedHost$) source="/app/apache/httpd_rp/logs/access
         <title>Exceptions</title>
         <search base="webPerformance">
           <query>
-| `massageCombinedAccess` 
 | search (status!=200 status!=304 status!=404)
 | lookup httpStatusCodes.csv status output status_description status_type
 | stats count by status_description
