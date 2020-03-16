@@ -1,0 +1,590 @@
+<form stylesheet="carousel.css" script="carousel.js" theme="dark">
+  <search id="webPerformance">
+    <query>
+index="prod_web" (sourcetype="access_combined" OR sourcetype="access_combined_wcookie") host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") (status &gt; 0)
+| table status other _time
+| eval duration=(round(other/1000000))
+| eval transactionGrade=case(status &lt; 400,"Good", (status &gt;=400 AND status &lt; 500), "Warn", status &gt;= 500, "Bad")
+| eval transactionSpeed=case(duration &lt; 30,"Fast", (duration &gt;= 30 AND duration &lt; 60), "Medium", duration &gt;=60, "Slow")
+| eventstats count as totalCount
+| eventstats count as speedCount by transactionSpeed
+| eventstats count as gradeCount by transactionGrade
+| eval speedPercent=round(((speedCount/totalCount)*100),2)
+| eval gradePercent=round(((gradeCount/totalCount)*100),2)
+    </query>
+    <earliest>$selectedTimeframe$</earliest>
+    <latest>now</latest>
+  </search>
+  <search id="webPerformance_1d">
+    <query>
+| inputcsv jag-proxy-servers-status-time-1d.csv
+| table status other _time 
+| eval duration=(round(other/1000000)) 
+| eval transactionGrade=case(status &lt; 400,"1", (status &gt;=400 AND status &lt; 500), "2", status &gt;= 500, "3") 
+| eval transactionSpeed=case(duration &lt; 30,"A", (duration &gt;= 30 AND duration &lt; 60), "B", duration &gt;=60, "C") 
+| eventstats count as totalCount 
+| eventstats count as speedCount by transactionSpeed 
+| eventstats count as gradeCount by transactionGrade 
+| eval speedPercent=round(((speedCount/totalCount)*100),2) 
+| eval gradePercent=round(((gradeCount/totalCount)*100),2) 
+    </query>
+    <earliest>-1d@d</earliest>
+    <latest>@d</latest>
+  </search>
+  <search id="webPerformance_7d">
+    <query>
+| inputcsv jag-proxy-servers-status-time-7d.csv
+| table status other _time 
+| eval duration=(round(other/1000000)) 
+| eval transactionGrade=case(status &lt; 400,"1", (status &gt;=400 AND status &lt; 500), "2", status &gt;= 500, "3") 
+| eval transactionSpeed=case(duration &lt; 30,"A", (duration &gt;= 30 AND duration &lt; 60), "B", duration &gt;=60, "C") 
+| eventstats count as totalCount 
+| eventstats count as speedCount by transactionSpeed 
+| eventstats count as gradeCount by transactionGrade 
+| eval speedPercent=round(((speedCount/totalCount)*100),2) 
+| eval gradePercent=round(((gradeCount/totalCount)*100),2) 
+    </query>
+    <earliest>-2d@d</earliest>
+    <latest>@d</latest>
+  </search>
+  <search id="webPerformance_28d">
+    <query>
+| inputcsv jag-proxy-servers-status-time-7d.csv
+| table status other _time 
+| eval duration=(round(other/1000000)) 
+| eval transactionGrade=case(status &lt; 400,"1", (status &gt;=400 AND status &lt; 500), "2", status &gt;= 500, "3") 
+| eval transactionSpeed=case(duration &lt; 30,"A", (duration &gt;= 30 AND duration &lt; 60), "B", duration &gt;=60, "C") 
+| eventstats count as totalCount 
+| eventstats count as speedCount by transactionSpeed 
+| eventstats count as gradeCount by transactionGrade 
+| eval speedPercent=round(((speedCount/totalCount)*100),2) 
+| eval gradePercent=round(((gradeCount/totalCount)*100),2) 
+    </query>
+    <earliest>-3d@d</earliest>
+    <latest>@d</latest>
+  </search>
+  <label>CEIS - Executive Summary</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="dropdown" token="selectedTimeframe" searchWhenChanged="true">
+      <label>Select a timeframe:</label>
+      <choice value="-15m">15 mins</choice>
+      <choice value="-1h">1 hour</choice>
+      <choice value="-8h">8 hours</choice>
+      <default>-15m</default>
+      <initialValue>-15m</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <search>
+          <query>
+| makeresults 
+| eval title="Network Performance Indicators" 
+| eval colorCode=1
+| stats values(colorCode) as colorCode by title
+| eval range=if(isnotnull(title),"guarded","low")
+          </query>
+          <earliest>-1m@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="field">title</option>
+        <option name="height">60</option>
+        <option name="rangeColors">["0x101010","0x0000FF","0x0000FF","0x0000FF","0x0000FF"]</option>
+        <option name="useColors">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Traffic reliability (with 5 Minute Trend)</title>
+      <single>
+        <search base="webPerformance">
+          <query>
+| where transactionGrade="Good"
+| timechart
+  values(gradePercent)
+  by
+  transactionGrade
+        </query>
+        </search>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">120</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="trendInterval">-5m</option>
+        <option name="underLabel">Good</option>
+        <option name="unit">%</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+      <single>
+        <search base="webPerformance">
+          <query>
+| where transactionGrade="Warn"
+| timechart
+  values(gradePercent)
+  by
+  transactionGrade
+          </query>
+        </search>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">120</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">inverse</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="trendInterval">-5m</option>
+        <option name="underLabel">Warning</option>
+        <option name="unit">%</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+      <single>
+        <search base="webPerformance">
+          <query>
+| where transactionGrade="Bad"
+| timechart
+  values(gradePercent)
+  by
+  transactionGrade
+          </query>
+        </search>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="height">120</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">inverse</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="trendInterval">-5m</option>
+        <option name="underLabel">Bad</option>
+        <option name="unit">%</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Traffic speed (with 5 Minute Trend)</title>
+      <single>
+        <search base="webPerformance">
+          <query>
+| where transactionSpeed="Fast"
+| timechart
+  values(speedPercent)
+  by
+  transactionSpeed
+          </query>
+        </search>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">120</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="trendInterval">-5m</option>
+        <option name="underLabel">Fast</option>
+        <option name="unit">%</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+      <single>
+        <search base="webPerformance">
+          <query>
+| where transactionSpeed="Medium"
+| timechart
+  values(speedPercent)
+  by
+  transactionSpeed
+          </query>
+        </search>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">120</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">inverse</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="trendInterval">-5m</option>
+        <option name="underLabel">Medium</option>
+        <option name="unit">%</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+      <single>
+        <search base="webPerformance">
+          <query>
+| where transactionSpeed="Slow"
+| timechart
+  values(speedPercent)
+  by
+  transactionSpeed
+          </query>
+        </search>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="height">120</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">inverse</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="trendInterval">-5m</option>
+        <option name="underLabel">Slow</option>
+        <option name="unit">%</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <single>
+        <search>
+          <query>
+| makeresults 
+| eval title="Daily" 
+| eval colorCode=1
+| stats values(colorCode) as colorCode by title
+| eval range=if(isnotnull(title),"guarded","low")
+          </query>
+          <earliest>-1m@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="field">title</option>
+        <option name="height">60</option>
+        <option name="rangeColors">["0x325b99","0x3c444d","0x3c444d","0x3c444d","0x3c444d"]</option>
+        <option name="useColors">0</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <search>
+          <query>
+| makeresults 
+| eval title="Weekly" 
+| eval colorCode=1
+| stats values(colorCode) as colorCode by title
+| eval range=if(isnotnull(title),"guarded","low")
+          </query>
+          <earliest>-1m@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="field">title</option>
+        <option name="height">60</option>
+        <option name="rangeColors">["0x325b99","0x3c444d","0x3c444d","0x3c444d","0x3c444d"]</option>
+        <option name="useColors">0</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <search>
+          <query>
+| makeresults 
+| eval title="Monthly" 
+| eval colorCode=1
+| stats values(colorCode) as colorCode by title
+| eval range=if(isnotnull(title),"guarded","low")
+          </query>
+          <earliest>-1m@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="field">title</option>
+        <option name="height">60</option>
+        <option name="rangeColors">["0x325b99","0x3c444d","0x3c444d","0x3c444d","0x3c444d"]</option>
+        <option name="useColors">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Traffic reliability</title>
+      <chart>
+        <search base="webPerformance_1d">
+          <query>
+| stats count by transactionGrade 
+| sort transactionGrade | replace "1" with "Good" "2" with "Warn" "3" with "Bad"</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Events</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">linear</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <search base="webPerformance_7d">
+          <query>
+| stats count by transactionGrade 
+| sort transactionGrade | replace "1" with "Good" "2" with "Warn" "3" with "Bad"</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Events</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">linear</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <search base="webPerformance_28d">
+          <query>
+| stats count by transactionGrade 
+| sort transactionGrade | replace "1" with "Good" "2" with "Warn" "3" with "Bad"</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Events</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">linear</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Traffic speed</title>
+      <chart>
+        <search base="webPerformance_1d">
+          <query>
+| stats count by transactionSpeed 
+| sort transactionSpeed  
+| replace "A" with "Fast" "B" with "Medium" "C" with "Slow"</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Events</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">linear</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <search base="webPerformance_7d">
+          <query>
+| stats count by transactionSpeed 
+| sort transactionSpeed  
+| replace "A" with "Fast" "B" with "Medium" "C" with "Slow"</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Events</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">linear</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <search base="webPerformance_28d">
+          <query>
+| stats count by transactionSpeed 
+| sort transactionSpeed  
+| replace "A" with "Fast" "B" with "Medium" "C" with "Slow"</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Events</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">linear</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+</form>
