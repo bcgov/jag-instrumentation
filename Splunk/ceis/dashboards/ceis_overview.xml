@@ -57,6 +57,14 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
   max(memUsedPct) as MEM
   max(pctIowait) as IO
   by serverScope
+| appendcols [ search sourcetype IN ("access_combined_wcookie" "access_combined") index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") status &gt; 499 
+| timechart 
+    span=60s
+    count as Returns
+    by status
+    useother=false
+    usenull=false
+]
           </query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -67,7 +75,6 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="charting.axisX.abbreviation">none</option>
         <option name="charting.axisX.scale">linear</option>
         <option name="charting.axisY.abbreviation">none</option>
-        <option name="charting.axisY.maximumNumber">100</option>
         <option name="charting.axisY.minimumNumber">0</option>
         <option name="charting.axisY.scale">linear</option>
         <option name="charting.axisY2.abbreviation">none</option>
@@ -79,8 +86,8 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="charting.chart.bubbleMaximumSize">50</option>
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">connect</option>
-        <option name="charting.chart.overlayFields">"CPU: Adobe Experience Management","CPU: Oracle DB/Store","CPU: Oracle Forms","CPU: Proxy","MEM: Adobe Experience Management","MEM: Oracle DB/Store","MEM: Oracle Forms","MEM: Proxy"</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.overlayFields">"CPU: Adobe Experience Management","CPU: Oracle DB/Store","CPU: Oracle Forms","CPU: Proxy","MEM: Adobe Experience Management","MEM: Oracle DB/Store","MEM: Oracle Forms","MEM: Proxy","IO: Adobe Experience Management","IO: Oracle DB/Store","IO: Oracle Forms","IO: Proxy"</option>
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">default</option>
@@ -293,7 +300,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="charting.axisX.abbreviation">none</option>
         <option name="charting.axisX.scale">linear</option>
         <option name="charting.axisY.abbreviation">none</option>
-        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY.scale">log</option>
         <option name="charting.axisY2.abbreviation">none</option>
         <option name="charting.axisY2.enabled">0</option>
         <option name="charting.axisY2.scale">inherit</option>
@@ -321,7 +328,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="trellis.splitBy">config</option>
         <drilldown>
           <!-- <eval token="statusCode">substr($trellis.value$,-4,3)</eval> -->
-          <eval token="filterInclude">"status=" + substr($trellis.value$,-4,3) + " \"" + $click.value$ + "\" " + $form.filterInclude$</eval>
+          <eval token="filterInclude">"status=" + substr($click.value$,-4,3) + " \"" + $click.name2$ + "\" " + $form.filterInclude$</eval>
           <link target="_blank">/app/search/ceis_overview?form.filterInclude=$filterInclude$&amp;form.ceisOverviewTimePicker.earliest=$earliest$&amp;form.ceisOverviewTimePicker.latest=$latest$&amp;form.filterExclude=$form.filterExclude$</link>
         </drilldown>
       </chart>
