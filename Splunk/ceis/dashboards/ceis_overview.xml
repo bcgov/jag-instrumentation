@@ -17,32 +17,31 @@ index="main" host IN ("stew.bcgov" "seethe.bcgov" "simmer.bcgov" "bert" "stubble
     <query>
 sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") $form.filterInclude$ status&gt;=500 AND NOT ($form.filterExclude$)
 | lookup httpStatusCodes.csv status AS status output status_description
-| `massageCombinedAccess` 
-| eval jsessionConfig=if(like(actionPath, "/dars/%"), "/dars", jsessionConfig) 
-| eval jsessionConfig=if(like(actionPath, "/jpac/%"), "/jpac", jsessionConfig) 
-| eval jsessionConfig=if(like(actionPath, "/dps/%"), "/dps", jsessionConfig) 
-| eval jsessionConfig=if(like(actionPath, "/ords/%"), "/ords", jsessionConfig) 
-| eval rich_status_description = status_description + " (" + status + ")" 
+| eval config=if(like(uri_path, "/dars/%"), "dars", config) 
+| eval config=if(like(uri_path, "/jpac/%"), "jpac", config) 
+| eval config=if(like(uri_path, "/dps/%"), "dps", config) 
+| eval config=if(like(uri_path, "/ords/%"), "ords", config) 
+| eval rich_status_description = status_description + " (" + status + ")"
 | fields * 
     </query>
     <earliest>$ceisOverviewTimePicker.earliest$</earliest>
     <latest>$ceisOverviewTimePicker.latest$</latest>
   </search>
   <label>CEIS Overview</label>
-  <fieldset submitButton="false">
-    <input type="time" token="ceisOverviewTimePicker">
-      <label>Time Range</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="ceisOverviewTimePicker" searchWhenChanged="true">
+      <label>Select a timeframe:</label>
       <default>
         <earliest>-60m@m</earliest>
         <latest>now</latest>
       </default>
     </input>
     <input type="text" token="filterExclude" searchWhenChanged="true">
-      <label>Filter: Exclued from search</label>
+      <label>Filter: Excluded from search</label>
       <default>"GET /ipp/ValidationLogin.aspx HTTP/1.1" OR "OPTIONS /11gforms/web/modplsql/appl6prda/ HTTP/1.1" OR "OPTIONS /11gforms/web/modplsql/appl6prda HTTP/1.1"</default>
     </input>
     <input type="text" token="filterInclude" searchWhenChanged="true">
-      <label>Filter: Inclued in search</label>
+      <label>Filter: Included in search</label>
       <default></default>
     </input>
   </fieldset>
@@ -52,27 +51,34 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
       <chart>
         <search base="systemPerformance">
           <query>
-
 | timechart
   span=60sec
   max(cpu_load_percent) as CPU
   max(memUsedPct) as MEM
   max(pctIowait) as IO
-  by serverScope</query>
+  by serverScope
+| appendcols [ search sourcetype IN ("access_combined_wcookie" "access_combined") index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") status &gt; 499 
+| timechart 
+    span=60s
+    count as Returns
+    by status
+    useother=false
+    usenull=false
+]
+          </query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-        <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
-        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">collapsed</option>
         <option name="charting.axisX.abbreviation">none</option>
         <option name="charting.axisX.scale">linear</option>
         <option name="charting.axisY.abbreviation">none</option>
-        <option name="charting.axisY.maximumNumber">100</option>
         <option name="charting.axisY.minimumNumber">0</option>
         <option name="charting.axisY.scale">linear</option>
         <option name="charting.axisY2.abbreviation">none</option>
-        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.enabled">1</option>
         <option name="charting.axisY2.maximumNumber">100</option>
         <option name="charting.axisY2.minimumNumber">0</option>
         <option name="charting.axisY2.scale">inherit</option>
@@ -80,8 +86,8 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="charting.chart.bubbleMaximumSize">50</option>
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">connect</option>
-        <option name="charting.chart.overlayFields">"CPU: Adobe Experience Management","CPU: Oracle DB/Store","CPU: Oracle Forms","CPU: Proxy","MEM: Adobe Experience Management","MEM: Oracle DB/Store","MEM: Oracle Forms","MEM: Proxy"</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.overlayFields">"CPU: Adobe Experience Management","CPU: Oracle DB/Store","CPU: Oracle Forms","CPU: Proxy","MEM: Adobe Experience Management","MEM: Oracle DB/Store","MEM: Oracle Forms","MEM: Proxy","IO: Adobe Experience Management","IO: Oracle DB/Store","IO: Oracle Forms","IO: Proxy"</option>
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">default</option>
@@ -106,7 +112,8 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
       <chart>
         <search base="proxyLogs">
           <query>
-| timechart span=60s count by rich_status_description</query>
+| timechart span=60s count by rich_status_description
+          </query>
         </search>
         <option name="charting.axisTitleX.visibility">collapsed</option>
         <option name="charting.axisTitleY.visibility">collapsed</option>
@@ -123,7 +130,8 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
       <chart>
         <search base="proxyLogs">
           <query>
-| timechart span=60s count by jsessionConfig</query>
+| timechart span=60s count by config
+          </query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
@@ -163,11 +171,12 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
   </row>
   <row>
     <panel>
-      <title>Total errors</title>
+      <title>Total Errors - Selected Timeframe</title>
       <single>
         <search base="proxyLogs">
           <query>
-| stats count</query>
+| stats count
+          </query>
         </search>
         <option name="colorBy">value</option>
         <option name="colorMode">block</option>
@@ -194,7 +203,8 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
       <single>
         <search base="proxyLogs">
           <query>
-| timechart span=1h count</query>
+            | timechart span=60s count
+          </query>
         </search>
         <option name="colorBy">trend</option>
         <option name="colorMode">block</option>
@@ -210,24 +220,29 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
         <option name="trendColorInterpretation">inverse</option>
-        <option name="trendDisplayMode">absolute</option>
-        <option name="trendInterval">auto</option>
+        <option name="trendDisplayMode">percent</option>
+        <option name="trendInterval">-1h</option>
         <option name="unitPosition">after</option>
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
       </single>
     </panel>
+  </row>
+  <row>
     <panel>
       <title>Errors by Status Code</title>
       <chart>
         <search base="proxyLogs">
           <query>
-| stats count as numberOfErrors by rich_status_description | sort -numberOfErrors</query>
+| chart count as numberOfErrors by rich_status_description 
+| sort -numberOfErrors
+| rename numberOfErrors as "Number of Errors"
+          </query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-        <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
         <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.axisX.abbreviation">none</option>
         <option name="charting.axisX.scale">linear</option>
@@ -252,6 +267,7 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="charting.legend.mode">standard</option>
         <option name="charting.legend.placement">none</option>
         <option name="charting.lineWidth">2</option>
+        <option name="height">287</option>
         <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
@@ -263,28 +279,32 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         </drilldown>
       </chart>
     </panel>
-  </row>
-  <row>
     <panel>
-      <title>Errors by application</title>
+      <title>Errors by Application</title>
       <chart>
         <search base="proxyLogs">
           <query>
-| stats count as numberOfErrors by rich_status_description,jsessionConfig | sort -numberOfErrors</query>
+| chart count as numberOfErrors by rich_status_description config useother=false
+| sort -numberOfErrors config -rich_status_description
+| rename 
+  numberOfErrors as "Number of Errors"
+  rich_status_description as "Error Type"
+  config as "Application"
+          </query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
         <option name="charting.axisTitleX.visibility">collapsed</option>
         <option name="charting.axisTitleY.visibility">collapsed</option>
-        <option name="charting.axisTitleY2.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.axisX.abbreviation">none</option>
         <option name="charting.axisX.scale">linear</option>
         <option name="charting.axisY.abbreviation">none</option>
-        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY.scale">log</option>
         <option name="charting.axisY2.abbreviation">none</option>
         <option name="charting.axisY2.enabled">0</option>
         <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">bar</option>
+        <option name="charting.chart">column</option>
         <option name="charting.chart.bubbleMaximumSize">50</option>
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
@@ -298,15 +318,17 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
         <option name="charting.legend.mode">standard</option>
-        <option name="charting.legend.placement">none</option>
+        <option name="charting.legend.placement">right</option>
         <option name="charting.lineWidth">2</option>
+        <option name="height">297</option>
         <option name="refresh.display">progressbar</option>
-        <option name="trellis.enabled">1</option>
-        <option name="trellis.scales.shared">0</option>
-        <option name="trellis.size">medium</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">small</option>
+        <option name="trellis.splitBy">config</option>
         <drilldown>
           <!-- <eval token="statusCode">substr($trellis.value$,-4,3)</eval> -->
-          <eval token="filterInclude">"status=" + substr($trellis.value$,-4,3) + " \"" + $click.value$ + "\" " + $form.filterInclude$ </eval>
+          <eval token="filterInclude">"status=" + substr($click.value$,-4,3) + " \"" + $click.name2$ + "\" " + $form.filterInclude$</eval>
           <link target="_blank">/app/search/ceis_overview?form.filterInclude=$filterInclude$&amp;form.ceisOverviewTimePicker.earliest=$earliest$&amp;form.ceisOverviewTimePicker.latest=$latest$&amp;form.filterExclude=$form.filterExclude$</link>
         </drilldown>
       </chart>
@@ -314,22 +336,15 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
   </row>
   <row>
     <panel>
-      <title>Request Times</title>
+      <title>Slow Requests (Over 20 seconds)</title>
       <chart>
-        <search>
-          <query>sourcetype="access_combined_wcookie" index="prod_web" AND host IN ("seethe.bcgov" "simmer.bcgov" "stew.bcgov") other&gt;190000000 
-| `massageCombinedAccess` 
-| eval jsessionConfig=if(like(actionPath, "/dars/%"), "/dars", jsessionConfig) 
-| eval jsessionConfig=if(like(actionPath, "/jpac/%"), "/jpac", jsessionConfig) 
-| eval jsessionConfig=if(like(actionPath, "/dps/%"), "/dps", jsessionConfig) 
-| eval jsessionConfig=if(like(actionPath, "/ords/%"), "/ords", jsessionConfig) 
+        <search base="proxyLogs">
+          <query>
 | eval timeTaken4Request=(other/1000000) 
-| fields * 
-| timechart span=60s max(timeTaken4Request) as MaxTime by jsessionConfig 
-| eval Thrushold=120</query>
-          <earliest>$ceisOverviewTimePicker.earliest$</earliest>
-          <latest>$ceisOverviewTimePicker.latest$</latest>
-          <sampleRatio>1</sampleRatio>
+| where timeTaken4Request &gt; 20
+| timechart span=60s max(timeTaken4Request) as MaxTime by config
+| eval Threshold=120
+          </query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
@@ -372,12 +387,16 @@ sourcetype IN ("access_combined_wcookie", "access_combined") index="prod_web" AN
       <table>
         <search base="proxyLogs">
           <query>
-| table _time, clientip, rich_status_description, status, method, jsessionConfig, jsessionNumber, _raw</query>
+| rex field=file "\!(?&lt;jsessionNumber&gt;.*)"
+| eval jsessionNumber=replace(jsessionNumber,"-","")
+| table _time, clientip, rich_status_description, status, method, config, jsessionNumber, _raw
+          </query>
         </search>
         <option name="count">5</option>
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">row</option>
         <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
