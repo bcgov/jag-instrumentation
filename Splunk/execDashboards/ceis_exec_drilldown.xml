@@ -1,0 +1,891 @@
+<form theme="dark">
+  <search id="webPerformance">
+    <query>
+index IN ("prod_web") host IN ("stew.bcgov", "seethe.bcgov", "simmer.bcgov", "churn.bcgov", "parch.bcgov", "bert", "stubble", "orkney", "williams") sourcetype IN ("access_combined", "access_combined_wcookie") 
+    </query>
+    <earliest>$selectedTimeframe.earliest$</earliest>
+    <latest>$selectedTimeframe.latest$</latest>
+  </search>
+  <search id="otherPerformance">
+    <query>
+index IN ("prod_web", "prod_database", "prod_jboss" "prod_ssg") host IN ("pulsar", "preon", "neutron", "aem1.bcgov", "aem2.bcgov", "glaze.dmz", "mince.dmz" "pledge.bcgov", "promise.bcgov", "hitch.bcgov", "saute.bcgov", "poach.bcgov", "stirfry.bcgov") sourcetype IN ("alert_prdj", "server-too_small", "access_log-too_small", "ecrc-too_small", "lra-too_small", "cso-2", "cso-too_small", "crc-too_small", "filingassistant-too_small", "essa-too_small", "dfweb-too_small", "psso-too_small", "ceis-too_small", "opra-too_small", "ApiGateway-Anon", "phis-too_small", "JrccOrdsApiWrapper-too_small", "pacws-too_small", "iris-too_small", "iris-4", "iris-2", "cdds-too_small", "ccd-too_small", "carmaws-too_small", "crrpservice-too_small", "cso-autoefile-batch-run", "essaws-too_small", "csows-too_small", "csojm-too_small", "cdds-3", "pac-too_small", "docUploader-too_small", "vipsws-too_small", "vista-too_small", "dfwebws-too_small", "cso2jpiws-too_small", "fams-too_small") tag="error"
+    </query>
+    <earliest>$selectedTimeframe.earliest$</earliest>
+    <latest>$selectedTimeframe.latest$</latest>
+  </search>
+  <label>CEIS Exec Drilldown</label>
+  <fieldset autoRun="true" submitButton="false">
+    <input type="time" searchWhenChanged="true" token="selectedTimeframe">
+      <label>Select a timeframe:</label>
+      <default>
+        <earliest>-5m</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search>
+          <query>| makeresults 
+| eval count="Server Performance                                    " 
+| eval icon="none" 
+| eval color="#212527"
+| table count icon color</query>
+          <earliest>-1m@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">60</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">background</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="webPerformance">
+          <query>
+| search host="seethe.bcgov" 
+| eval errorType=case(
+    status &lt; 400, "OK",
+    status &gt;=400 AND status &lt;500, "AppErr",
+    status &gt;=500, "SvrErr"
+    ) 
+| search errorType="SvrErr" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="seethe.bcgov " 
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="webPerformance">
+          <query>
+| search host="bert"
+| eval errorType=case(
+    status &lt; 400, "OK",
+    status &gt;=400 AND status &lt;500, "AppErr",
+    status &gt;=500, "SvrErr"
+    ) 
+| search errorType="SvrErr" proxyGateway="Jag" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="bert         " 
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="pulsar"
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="pulsar       " 
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="aem1.bcgov"
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="aem1         "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="webPerformance">
+          <query>
+| search host="churn.bcgov" 
+| eval errorType=case(
+    status &lt; 400, "OK",
+    status &gt;=400 AND status &lt;500, "AppErr",
+    status &gt;=500, "SvrErr"
+    ) 
+| search errorType="SvrErr" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="churn.bcgov  "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="glaze.dmz" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="glaze.dmz    " 
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="pledge.bcgov" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="pledge       " 
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="hitch.bcgov" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="hitch.bcgov  " 
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="webPerformance">
+          <query>
+| search host="simmer.bcgov" 
+| eval errorType=case(
+    status &lt; 400, "OK",
+    status &gt;=400 AND status &lt;500, "AppErr",
+    status &gt;=500, "SvrErr"
+    ) 
+| search errorType="SvrErr" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="simmer.bcgov "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="webPerformance">
+          <query>
+| search host="stubble"
+| eval errorType=case(
+    status &lt; 400, "OK",
+    status &gt;=400 AND status &lt;500, "AppErr",
+    status &gt;=500, "SvrErr"
+    ) 
+| search errorType="SvrErr" proxyGateway="Jag" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="stubble      "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="preon"
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="preon        "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="aem2.bcgov"
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="aem2         "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="webPerformance">
+          <query>
+| search host="parch.bcgov" 
+| eval errorType=case(
+    status &lt; 400, "OK",
+    status &gt;=400 AND status &lt;500, "AppErr",
+    status &gt;=500, "SvrErr"
+    ) 
+| search errorType="SvrErr" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="parch.bcgov  "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="mince.dmz" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="mince.dmz    " 
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>| search host="promise.bcgov" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="promise      "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="saute.bcgov" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="saute.bcgov  "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="webPerformance">
+          <query>
+| search host="stew.bcgov" 
+| eval errorType=case(
+    status &lt; 400, "OK",
+    status &gt;=400 AND status &lt;500, "AppErr",
+    status &gt;=500, "SvrErr"
+    ) 
+| search errorType="SvrErr" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="stew.bcgov   " 
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="webPerformance">
+          <query>
+| search host="orkney"
+| eval errorType=case(
+    status &lt; 400, "OK",
+    status &gt;=400 AND status &lt;500, "AppErr",
+    status &gt;=500, "SvrErr"
+    ) 
+| search errorType="SvrErr" proxyGateway="Jag" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="orkney       "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="neutron"
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="neutron      " 
+| table count icon color
+</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <html>
+        <u1> </u1>
+      </html>
+    </panel>
+    <panel>
+      <html>
+         <u1> </u1>
+       </html>
+    </panel>
+    <panel>
+      <html>
+         <u1> </u1>
+       </html>
+    </panel>
+    <panel>
+      <html>
+         <u1> </u1>
+       </html>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="poach.bcgov" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="poach.bcgov  "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>
+         <u1> </u1>
+       </html>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="webPerformance">
+          <query>
+| search host="williams"
+| eval errorType=case(
+    status &lt; 400, "OK",
+    status &gt;=400 AND status &lt;500, "AppErr",
+    status &gt;=500, "SvrErr"
+    ) 
+| search errorType="SvrErr" proxyGateway="Jag" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="williams     "
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+    <panel>
+      <html>
+         <u1> </u1>
+       </html>
+    </panel>
+    <panel>
+      <html>
+         <u1> </u1>
+       </html>
+    </panel>
+    <panel>
+      <html>
+         <u1> </u1>
+       </html>
+    </panel>
+    <panel>
+      <html>
+         <u1> </u1>
+       </html>
+    </panel>
+    <panel>
+      <html>
+         <u1> </u1>
+       </html>
+    </panel>
+    <panel>
+      <viz type="status_indicator_app.status_indicator">
+        <search base="otherPerformance">
+          <query>
+| search host="stirfry.bcgov" 
+| stats count 
+| eval icon=case(
+    count &lt; 1, "check-circle",
+    count &gt;=1 AND count &lt; 2, "exclamation-triangle",
+    count &gt;=2, "times-circle"
+    ) 
+| eval color=case(
+    count &lt; 1, "#53a051",
+    count &gt;=1 AND count &lt; 2, "#F58F39",
+    count &gt;=2, "#dc4e41"
+    ) 
+| eval count="stirfry.bcgov"
+| table count icon color</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">119</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="status_indicator_app.status_indicator.colorBy">field_value</option>
+        <option name="status_indicator_app.status_indicator.fillTarget">text</option>
+        <option name="status_indicator_app.status_indicator.fixIcon">warning</option>
+        <option name="status_indicator_app.status_indicator.icon">field_value</option>
+        <option name="status_indicator_app.status_indicator.precision">0</option>
+        <option name="status_indicator_app.status_indicator.showOption">1</option>
+        <option name="status_indicator_app.status_indicator.staticColor">#555</option>
+        <option name="status_indicator_app.status_indicator.useColors">true</option>
+        <option name="status_indicator_app.status_indicator.useThousandSeparator">true</option>
+      </viz>
+    </panel>
+  </row>
+</form>
