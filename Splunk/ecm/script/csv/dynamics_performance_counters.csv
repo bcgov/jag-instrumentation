@@ -1,14 +1,12 @@
 ﻿Object,Instance,Counters
 CRM Platform,*,Assign Cascade Collect execution time;Assign Cascade Execute execution time;Assign Cascade Total execution time;Average time of import request;Delete Cascade Collect entities count;Delete Cascade Collect execution time;Delete Cascade Execute execution time;Delete Cascade Total execution time;Number of import requests per hour;Number of publish requests per hour;Share Cascade Collect execution time;Share Cascade Execute execution time;Share Cascade Total execution time;Unshare Cascade Collect execution time;Unshare Cascade Execute execution time;Unshare Cascade Total execution time
-CRM Server,*,Failed Organization Service Requests;Failed InProcess CrmService Requests;Failed Organization Service Metadata Requests;
-CRM Discovery,*,Failed Discovery Service Requests;
-MSCRMEmail,*,Incoming e-mail messages discarded;Incoming e-mail messages potentially corrupted;Incoming e-mail messages processed per second;Incoming e-mail messages undelivered;Incoming mailbox access attempt failures;Outgoing e-mail messages processed per second;Outgoing e-mail messages undelivered;Service configuration refreshes;Service configuration scheduling cycles;Service provider load failures;Service providers aborted;Service providers failed;Service providers refreshed;Service providers removed;Service providers started;
-CRM LocatorService,*,LocatorServiceFailedCacheFlushRequests;LocatorServiceTotalCacheFlushRequests;
-CRM Authentication,*,WindowsAuthentication FailuresInTheLastMinute;ClaimsAuthentication FailuresInTheLastMinute;WindowsAuthenticationAttemptsInTheLastMinute;WindowsAuthenticationFailuresInTheLastMinute;ConfigDBWindowsAuthenticationAttemptsInTheLastMinute;ConfigDBWindowsAuthenticationFailuresInTheLastMinute;
-CRM OutlookSync,*,Total ABP Sync Requests;Total Offline Sync Requests;Total Succeeded Offline Sync Requests;Total Outlook Sync Requests;
-CRM Discovery,*,Total Discovery Service Requests;
-CRM Async Service,*,Total Operations Completed;Total Operations Completion Throughput;;Total Operations Failed With Retry;Total Operations Outstanding;MailboxQueue: Number of dequeue attempts;ActivityQueue: Number of dequeue attempts
-CRM Server,*,*
+CRM Server,*,Failed Organization Service Requests;Failed InProcess CrmService Requests;Failed Organization Service Metadata Requests;
+CRM Discovery,*,Failed Discovery Service Requests;Total Discovery Service Requests;
+MSCRMEmail,*,Incoming e-mail messages discarded;Incoming e-mail messages potentially corrupted;Incoming e-mail messages processed per second;Incoming e-mail messages undelivered;Incoming mailbox access attempt failures;Outgoing e-mail messages processed per second;Outgoing e-mail messages undelivered;Service configuration refreshes;Service configuration scheduling cycles;Service provider load failures;Service providers aborted;Service providers failed;Service providers refreshed;Service providers removed;Service providers started;
+CRM LocatorService,*,LocatorServiceFailedCacheFlushRequests;LocatorServiceTotalCacheFlushRequests;
+CRM Authentication,*,WindowsAuthentication FailuresInTheLastMinute;ClaimsAuthentication FailuresInTheLastMinute;WindowsAuthenticationAttemptsInTheLastMinute;WindowsAuthenticationFailuresInTheLastMinute;ConfigDBWindowsAuthenticationAttemptsInTheLastMinute;ConfigDBWindowsAuthenticationFailuresInTheLastMinute;
+CRM OutlookSync,*,Total ABP Sync Requests;Total Offline Sync Requests;Total Succeeded Offline Sync Requests;Total Outlook Sync Requests;
+CRM Server,*,*
 ServiceModelService 4.0.0.0,*,*
 CRM Async Service,*,*
 CRM Platform,*,*
@@ -18,5 +16,5 @@ CRM Server,*,*
 Outgoing Queue Manager,*,*
 MailboxQueue,*,*
 IncomingEmailProcessing,*,*
-Server-Side Synchronization   (Incoming and Exchange Auto-discover in your case),*,*
+Server-Side Synchronization (Incoming and Exchange Auto-discover in your case),*,*
 MailboxTestAccess,*,*
