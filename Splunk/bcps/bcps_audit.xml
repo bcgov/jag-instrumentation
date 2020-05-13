@@ -1,0 +1,76 @@
+<form theme="dark">
+  <label>BCPS Audit</label>
+  <search id="fileAudit">
+    <query>
+      index="prod_bcps" host="CANCEL" sourcetype="csv" User!="NT AUTHORITY\\SYSTEM" File!=""
+      | eval file=lower(File)
+      | join User [
+        inputlookup dailyBCPSLoginLookup.csv
+        ]
+    </query>
+    <earliest>$selectedTimeframe.earliest$</earliest>
+    <latest>$selectedTimeframe.latest$</latest>
+  </search>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="time" token="selectedTimeframe" searchWhenChanged="true">
+      <label>Select a timeframe:</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="dropdown" token="selectedUsername" searchWhenChanged="true">
+      <label>Select a username:</label>
+      <choice value="*">All</choice>
+      <fieldForLabel>displayName</fieldForLabel>
+      <fieldForValue>displayName</fieldForValue>
+      <search base="fileAudit">
+        <query>
+            | search file="*$selectedSearchString$*"
+            | dedup displayName
+            | table  displayName
+            | sort displayName</query>
+      </search>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="text" token="selectedSearchString" searchWhenChanged="true">
+      <label>Search for a file or folder:</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search base="fileAudit">
+          <query>| search file="*$selectedSearchString$*" AND displayName="$selectedUsername$"
+            | eval operationTimes=Operation." @ ".Time." UTC"
+            | eval date=strftime(_time,"%Y/%m/%d")
+            | fillnull User displayName value="**** NONE ****"
+            | stats 
+                sum(Duration) as "Total Time"
+                values(operationTimes) as "Operation Times"
+                by
+                date
+                User
+                displayName
+                file
+            | sort User -date file
+            | rename 
+                date as "Date"
+                displayName as "User Name"
+                User as "User ID"</query>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>
