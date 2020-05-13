@@ -1,0 +1,1540 @@
+<form theme="dark">
+  <search id="JAGProxyPerf">
+    <query>
+index="main" host IN ("stew.bcgov" "seethe.bcgov" "simmer.bcgov") sourcetype IN ("top" "cpu" "df" "vmstat")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="JAGProxyLogs">
+    <query>
+index IN ("prod_web" "main") host IN ("stew.bcgov" "seethe.bcgov" "simmer.bcgov") sourcetype IN ("access_combined" "access_combined_wcookie" "apache_error" "syslog")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="JusticeProxyPerf">
+    <query>
+index="main" host IN ("churn.bcgov" "parch.bcgov") sourcetype IN ("top" "cpu" "df" "vmstat")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="JusticeProxyLogs">
+    <query>
+index IN ("prod_web" "main") host IN ("churn.bcgov" "parch.bcgov") sourcetype IN ("access_combined" "access_combined_wcookie" "apache_error" "syslog")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="OracleFormsPerf">
+    <query>
+index="main" host IN ("bert" "orkney" "stubble" "williams") sourcetype IN ("top" "cpu" "df" "vmstat")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="OracleFormsLogs">
+    <query>
+index="prod_oracleforms" host IN ("bert" "orkney" "stubble" "williams") sourcetype IN ("access_combined" "access_combined_wcookie" "apache_error")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="OracleDBGalaxyPerf">
+    <query>
+index="main" host IN ("pulsar" "preon" "neutron") sourcetype IN ("top" "cpu" "df" "vmstat")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="OracleDBGalaxyLogs">
+    <query>
+index="prod_database" host IN ("pulsar" "preon" "neutron") sourcetype IN ("alert_prdj")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>-15m@m</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="AEMPerf">
+    <query>
+index="main" host IN ("aem1.bcgov" "aem2.bcgov") sourcetype IN ("top" "cpu" "df" "vmstat")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="AEMLogs">
+    <query>
+index="prod_web" host IN ("aem1.bcgov" "aem2.bcgov")  sourcetype IN ("server-too_small" "access_log-too_small")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="JAGJBossAppClusterPerf">
+    <query>
+index="main" host IN ("hitch.bcgov" "saute.bcgov" "poach.bcgov" "stirfry.bcgov") sourcetype IN ("top" "cpu" "df" "vmstat")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="JAGJBossAppClusterLogs">
+    <query>
+index IN ("prod_jboss") host IN ("hitch.bcgov" "saute.bcgov" "poach.bcgov" "stirfry.bcgov") sourcetype IN ("phis-too_small",  "JrccOrdsApiWrapper-too_small",  "pacws-too_small",  "iris-too_small",  "iris-4",  "iris-2",  "cdds-too_small",  "ccd-too_small",  "carmaws-too_small",  "crrpservice-too_small",  "cso-autoefile-batch-run",  "essaws-too_small",  "csows-too_small",  "csojm-too_small",  "cdds-3",  "pac-too_small",  "docUploader-too_small",  "vipsws-too_small",  "vista-too_small",  "dfwebws-too_small",  "cso2jpiws-too_small",  "fams-too_small")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="JusticeJbossAppClusterPerf">
+    <query>
+index="main" host IN ("glaze.dmz" "mince.dmz") sourcetype IN ("top" "cpu" "df" "vmstat")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="JusticeJbossAppClusterLogs">
+    <query>
+index IN ("prod_jboss") host IN ("glaze.dmz" "mince.dmz") sourcetype IN ("ecrc-too_small", "lra-too_small", "cso-2", "cso-too_small", "crc-too_small", "filingassistant-too_small", "essa-too_small", "dfweb-too_small", "psso-too_small", "ceis-too_small", "opra-too_small") 
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype 
+| fields *
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="L7SSGPerf">
+    <query>
+index="main" host IN ("pledge.bcgov" "promise.bcgov") sourcetype IN ("top" "cpu" "df" "vmstat")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="L7SSGLogs">
+    <query>
+index IN ("prod_ssg") host IN ("pledge.bcgov" "promise.bcgov") sourcetype IN ("ApiGateway-Anon")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="DynamicsCRMFEPerf">
+    <query>
+index="main" host IN ("kindness" "giving") sourcetype IN ("Perfmon:Network Interface" "Perfmon:Available Memory" "Perfmon:CPU Load" "WinHostMon" "PerfmonMk:ProcessorInformation" "PerfmonMk:CPU" "PerfmonMk:Memory" "PerfmonMk:LogicalDisk" "PerfmonMk:System" "PerfmonMk:Network" "PerfmonMk:PhysicalDisk" "PerfmonMk:Process" "Perfmon:Free Disk Space" "XmlWinEventLog")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="DynamicsCRMFELogs">
+    <query>
+index IN ("prod_iis_web") host IN ("kindness" "giving") sourcetype IN ("iis")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="DynamicsCRMBEPerf">
+    <query>
+index="main" host IN ("lavish" "profuse") sourcetype IN ("Perfmon:Network Interface" "Perfmon:Available Memory" "Perfmon:CPU Load" "WinHostMon" "PerfmonMk:ProcessorInformation" "PerfmonMk:CPU" "PerfmonMk:Memory" "PerfmonMk:LogicalDisk" "PerfmonMk:System" "PerfmonMk:Network" "PerfmonMk:PhysicalDisk" "PerfmonMk:Process" "Perfmon:Free Disk Space" "XmlWinEventLog")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="DynamicsCRMBELogs">
+    <query>
+index IN ("prod_iis_web") host IN ("lavish" "profuse") sourcetype IN ("iis")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="DynamicsSQLServerPerf">
+    <query>
+index="main" host IN ("loyal" "devotion") sourcetype IN ("Perfmon:Network Interface" "Perfmon:Available Memory" "Perfmon:CPU Load" "WinHostMon" "PerfmonMk:ProcessorInformation" "PerfmonMk:CPU" "PerfmonMk:Memory" "PerfmonMk:LogicalDisk" "PerfmonMk:System" "PerfmonMk:Network" "PerfmonMk:PhysicalDisk" "PerfmonMk:Process" "Perfmon:Free Disk Space" "XmlWinEventLog")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="DynamicsSQLServerLogs">
+    <query>
+index IN ("sql_log") host IN ("loyal" "devotion") sourcetype IN ("mssql:errorlog")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="SharepointSQLServerPerf">
+    <query>
+index="main" host IN ("abundant" "genereous") sourcetype IN ("Perfmon:Network Interface" "Perfmon:Available Memory" "Perfmon:CPU Load" "WinHostMon" "PerfmonMk:ProcessorInformation" "PerfmonMk:CPU" "PerfmonMk:Memory" "PerfmonMk:LogicalDisk" "PerfmonMk:System" "PerfmonMk:Network" "PerfmonMk:PhysicalDisk" "PerfmonMk:Process" "Perfmon:Free Disk Space" "XmlWinEventLog")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="SharepointSQLServerLogs">
+    <query>
+index IN ("sql_log") host IN ("abundant" "genereous") sourcetype IN ("mssql:errorlog")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="SharepointPerf">
+    <query>
+index="main" host IN ("fertile" "proliferate") sourcetype IN ("Perfmon:Network Interface" "Perfmon:Available Memory" "Perfmon:CPU Load" "WinHostMon" "PerfmonMk:ProcessorInformation" "PerfmonMk:CPU" "PerfmonMk:Memory" "PerfmonMk:LogicalDisk" "PerfmonMk:System" "PerfmonMk:Network" "PerfmonMk:PhysicalDisk" "PerfmonMk:Process" "Perfmon:Free Disk Space" "XmlWinEventLog")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <search id="SharepointLogs">
+    <query>
+index IN ("prod_iis_web") host IN ("fertile" "proliferate") sourcetype IN ("iis")
+| table host, sourcetype 
+| stats dc(host) as numHosts, dc(sourcetype) as numSourcetype
+    </query>
+    <earliest>$timePicker.earliest$</earliest>
+    <latest>$timePicker.latest$</latest>
+  </search>
+  <label>Splunk Data Status</label>
+  <fieldset submitButton="false">
+    <input type="time" token="timePicker">
+      <label></label>
+      <default>
+        <earliest>-5m@m</earliest>
+        <latest>@m</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <search>
+          <query>
+| makeresults 
+| eval title="Performance data" 
+| eval colorCode=1
+| stats values(colorCode) as colorCode by title
+| eval range=if(isnotnull(title),"guarded","low")
+          </query>
+          <earliest>-1m@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="field">title</option>
+        <option name="height">60</option>
+        <option name="rangeColors">["0x101010","0x0000FF","0x0000FF","0x0000FF","0x0000FF"]</option>
+        <option name="useColors">0</option>
+      </single>
+      <single>
+        <search>
+          <query>
+| makeresults 
+| eval title="Log data" 
+| eval colorCode=1
+| stats values(colorCode) as colorCode by title
+| eval range=if(isnotnull(title),"guarded","low")
+          </query>
+          <earliest>-1m@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="field">title</option>
+        <option name="height">60</option>
+        <option name="rangeColors">["0x101010","0x0000FF","0x0000FF","0x0000FF","0x0000FF"]</option>
+        <option name="useColors">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>JAG Proxy (stew.bcgov, seethe.bcgov, simmer.bcgov)</title>
+      <single>
+        <search base="JAGProxyPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,2]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/3</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JAGProxyPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JAGProxyLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,2]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/3</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JAGProxyLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,2]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/3</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Justice Proxy (churn.bcgov, parch.bcgov)</title>
+      <single>
+        <search base="JusticeProxyPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JusticeProxyPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JusticeProxyLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JusticeProxyLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,2]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/3</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Oracle Forms (bert, orkney, stubble, williams)</title>
+      <single>
+        <search base="OracleFormsPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="OracleFormsPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="OracleFormsLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="OracleFormsLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/1</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Oracle Database Galaxy (pulsar, preon, neutron)</title>
+      <single>
+        <search base="OracleDBGalaxyPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,2]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/3</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="OracleDBGalaxyPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="OracleDBGalaxyLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/3</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="OracleDBGalaxyLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x006d9c","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/1</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Adobe Experience Manager (aem1.bcgov, aem2.bcgov)</title>
+      <single>
+        <search base="AEMPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="AEMPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="AEMLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="AEMLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>JAG JBoss App Cluster (hitch.bcgov, saute.bcgov, poach.bcgov, stirfry.bcgov)</title>
+      <single>
+        <search base="JAGJBossAppClusterPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JAGJBossAppClusterPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JAGJBossAppClusterLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JAGJBossAppClusterLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Justice JBoss App Cluster (glaze.dmz, mince.dmz)</title>
+      <single>
+        <search base="JusticeJbossAppClusterPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JusticeJbossAppClusterPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JusticeJbossAppClusterLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="JusticeJbossAppClusterLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Layer 7 SSG (pledge.bcgov, promise.bcgov)</title>
+      <single>
+        <search base="L7SSGPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="L7SSGPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,3]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/4</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="L7SSGLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="L7SSGLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unit">/1</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Dyanmics CRM Frontend (kindness, giving)</title>
+      <single>
+        <search base="DynamicsCRMFEPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="DynamicsCRMFEPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="DynamicsCRMFELogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="DynamicsCRMFELogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Dyanmics CRM Backend (lavish, profuse)</title>
+      <single>
+        <search base="DynamicsCRMBEPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="DynamicsCRMBEPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="DynamicsCRMBELogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="DynamicsCRMBELogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Dyanmics SQLServer (loyal, devotion)</title>
+      <single>
+        <search base="DynamicsSQLServerPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="DynamicsSQLServerPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="DynamicsSQLServerLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="DynamicsSQLServerLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Sharepoint SQLServer (abundant, genereous)</title>
+      <single>
+        <search base="SharepointSQLServerPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="SharepointSQLServerPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="SharepointSQLServerLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="SharepointSQLServerLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Sharepoint (fertile, proliferate)</title>
+      <single>
+        <search base="SharepointPerf">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="SharepointPerf">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="SharepointLogs">
+          <query> | table numHosts</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0x53a051"]</option>
+        <option name="rangeValues">[0,1]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Hosts</option>
+        <option name="unit">/2</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+      <single>
+        <search base="SharepointLogs">
+          <query> | table numSourcetype</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0xdc4e41","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">SourceTypes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">0</option>
+      </single>
+    </panel>
+  </row>
+</form>

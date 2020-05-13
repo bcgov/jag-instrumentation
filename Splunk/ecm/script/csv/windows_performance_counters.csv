@@ -1,0 +1,9 @@
+Object,Instance,Counters
+Memory,*,Available Mbytes;Pages/sec;
+LogicalDisk,*,Avg. Disk sec/Read;Avg. Disk sec/Write;Disk Reads/sec;Disk Writes/sec;
+PhysicalDisk,*,Avg. Disk sec/Read;Avg. Disk sec/Write;Disk Reads/sec;Disk Writes/sec;
+Processor,*,% Privileged Time;% Processor Time;
+Processor Information,_Total,% Processor Time;
+System,*,Processor Queue Length;
+Network Interface,*,Bytes Received/sec;Bytes Sent/sec;Packets Received/sec;Packets Sent/sec;Output Queue Length;
+ServiceModelService 4.0.0.0,*,*

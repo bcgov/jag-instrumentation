@@ -1,0 +1,12 @@
+﻿Object,Instance,Counters
+Processor,*,% Processor Time;% Processor Time;
+Disk,*,Avg. Disk Queue Length;Avg. Disk Read Queue Length;Avg. Disk Write Queue Length;Disk Reads/sec;Disk Writes/sec
+Memory,*,Available Mbytes;Cache Faults/sec;Pages/sec
+NIC,*,Total Bytes/sec;
+ASP.NET,*,Requests Total;Requests Queued;Request Wait Time;Requests Rejected;Requests Executing (_Total);Requests/Sec (_Total)
+.NET CLR Memory,*,# Gen 0 Collections;# Gen 1 Collections;# Gen 2 Collections;% Time in GC
+Disk,*,Avg. Disk Queue Length;% Idle Time;% Free Space
+Process,*,Working Set;Thread Count (_Total);% Processor Time
+ASP.NET,*,Application Pool Recycles;Requests Queued;Request Wait Time;Requests Rejected
+SharePoint Publishing Cache,*,Number of cache Compactions;BLOB Cache % full;Publishing cache flushes / second;Publishing cache hit ratio;Object cache flushes/Sec;Object Cache Hit Ratio
+ASP.NET Applications,*,Cache API trims;Cache API hit ratio;

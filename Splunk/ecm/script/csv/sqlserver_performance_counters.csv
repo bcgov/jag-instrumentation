@@ -1,0 +1,41 @@
+﻿Object,Instance,Counters
+SQLServer:Buffer Manager,*,*
+SQLServer:General Statistics,*,*
+SQLServer:Latches,*,*
+SQLServer:Locks,*,*
+SQLServer:Memory Manager,*,*
+SQLServer:SQL Statistics,*,*
+SQLServer:CLR,*,*
+SQLServer:Databases,*,*
+SQLServer:SQL Errors,*,*
+Process,sqlservr,% Privileged Time;% Processor Time;
+SQLServer:Access Methods,*,*
+SQLServer:Backup Device,*,*
+SQLServer:Batch Resp Statistics,*,*
+SQL Server:Buffer Node,*,*
+SQLServer:Catalog Metadata,*,*
+SQLServer:CLR,*,*
+SQLServer:Columnstore,*,*
+SQLServer:Cursor Manager by Type,*,*
+SQLServer:Cursor Manager Total,*,*
+SQLServer:Database Mirroring,*,*
+SQLServer:Databases,*,*
+SQL Server:Deprecated Features,*,*
+SQLServer:Exec Statistics,*,*
+SQL Server:External Scripts,*,*
+SQLServer:FileTable,*,*
+SQL Server:HADR Availability Replica,*,*
+SQL Server:HADR Database Replica,*,*
+SQL Server:HTTP Storage,*,*
+SQLServer:LogPool FreePool,*,*
+SQLServer:Memory Broker Clerks,*,*
+SQLServer:Memory Manager,*,*
+SQLServer:Plan Cache,*,*
+SQLServer: Query Store,*,*
+SQLServer: Resource Pool Stats,*,*
+SQLServer:SQL Errors,*,*
+SQLServer:SQL Statistics,*,*
+SQLServer:Transactions,*,*
+SQLServer:User Settable,*,*
+SQLServer: Wait Statistics,*,*
+SQLServer: Workload Group Stats,*,*
