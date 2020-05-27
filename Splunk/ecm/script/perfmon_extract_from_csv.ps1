@@ -32,7 +32,7 @@ foreach  ($file in $files.Name)
       else {
          $instance = $item.Instance
       }
-      $conf += "[perfmon://" + $name + ([Environment]::NewLine) + "object = " + $item.Object + ([Environment]::NewLine) + "counters = " + $item.Counters + ([Environment]::NewLine) + "instances = " + $instance + ([Environment]::NewLine) + "disabled = 0" + ([Environment]::NewLine) + "interval = 60" + ([Environment]::NewLine) + ([Environment]::NewLine)
+      $conf += "[perfmon://" + $item.Object + "]" + ([Environment]::NewLine) + "object = " + $item.Object + ([Environment]::NewLine) + "counters = " + $item.Counters + ([Environment]::NewLine) + "instances = " + $instance + ([Environment]::NewLine) + "disabled = 0" + ([Environment]::NewLine) + "interval = 60" + ([Environment]::NewLine) + ([Environment]::NewLine)
    }
    #create config file
    $filePath = $ourpath.Path + "\"+ $conf_file_name
