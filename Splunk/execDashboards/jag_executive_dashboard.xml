@@ -1,16 +1,19 @@
 <form theme="dark">
-  <label>JAG Application Executive Dashboard</label>
+  <label>JAG Application Executive Dashboard - SearchParty</label>
   <search id="availability">
     <query>
       sourcetype="web_ping" `website_monitoring_search_index`
       | fillnull value=1000 response_code 
-      | eval success=if((response_code=200 AND request_time &lt; 300),1,0) 
+      | eval success=if((response_code=200 AND request_time &lt; 500),1,NULL()) 
       | streamstats 
           count as totalCount
           count(success) as successCount
+          values(success) as success
           by title
-      | eval availability=(successCount/totalCount)*100
+      | eval availability=round((successCount/totalCount)*100,2)
     </query>
+    <earliest>$selectedTimeframe$</earliest>
+    <latest>now</latest>
   </search>
   <search id="networkTraffic">
     <query>
@@ -227,7 +230,7 @@
           <query>
           | where appName="CEIS"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -254,7 +257,7 @@
           <query>
           | where appName="CEIS"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -281,7 +284,8 @@
           <query>
           | where title="Oracle Forms 12: CEIS"
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -332,7 +336,7 @@
           <query>
           | where appName="eCRC"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -359,7 +363,7 @@
           <query>
           | where appName="eCRC"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed 
           | search Speed="*"
           </query>
@@ -386,7 +390,8 @@
           <query>
           | where title="eCRC"           
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -437,7 +442,7 @@
           <query>
           | where appName="Cannabis Licensing"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -464,8 +469,9 @@
           <query>
           | where appName="Cannabis Licensing"
           | timechart
-            span=60s
-            avg(speedPercent) as Speed | search Speed="*"
+            span=90s
+            avg(speedPercent) as Speed
+          | search Speed="*"
           </query>
         </search>
         <option name="colorBy">trend</option>
@@ -490,7 +496,8 @@
           <query>
           | where title="Cannabis Licensing"           
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -541,7 +548,7 @@
           <query>
           | where appName="LRA"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -568,7 +575,7 @@
           <query>
           | where appName="LRA"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed 
           | search Speed="*"
           </query>
@@ -590,30 +597,9 @@
       </single>
     </panel>
     <panel>
-      <single>
-        <search base="availability">
-          <query>
-          | where title="LRA" 
-          | timechart
-            avg(availability) as Availability
-            by title
-          </query>
-        </search>
-        <option name="colorBy">trend</option>
-        <option name="colorMode">none</option>
-        <option name="drilldown">none</option>
-        <option name="height">50</option>
-        <option name="numberPrecision">0.00</option>
-        <option name="rangeColors">["0xdc4e41", "0xf1813f", "0xf8be34", "0x53a051"]</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="showTrendIndicator">1</option>
-        <option name="trendColorInterpretation">standard</option>
-        <option name="trendDisplayMode">absolute</option>
-        <option name="trendInterval">-15m</option>
-        <option name="unit">%</option>
-        <option name="unitPosition">after</option>
-        <option name="useColors">1</option>
-      </single>
+      <html>
+        <p class="dashes">--</p>
+      </html>
     </panel>
   </row>
   <row>
@@ -646,7 +632,7 @@
           <query>
             | where appName="Oracle Forms 12: CEIS"
             | timechart
-              span=60s
+              span=90s
               avg(gradePercent) as Reliability
             | search Reliability="*"
           </query>
@@ -673,7 +659,7 @@
           <query>
           | where appName="Oracle Forms 12: CEIS"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed | search Speed="*"
           </query>
         </search>
@@ -699,7 +685,8 @@
           <query>
           | where title="Oracle Forms 12: CEIS" 
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -750,7 +737,7 @@
           <query>
           | where appName="Oracle Forms 12: Figaro"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -777,7 +764,7 @@
           <query>
           | where appName="Oracle Forms 12: Figaro"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed | search Speed="*"
           </query>
         </search>
@@ -803,7 +790,8 @@
           <query>
           | where title="Oracle Forms 12: Figaro" 
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -854,7 +842,7 @@
           <query>
           | where appName="Oracle Forms 12: TOSCA"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -881,7 +869,7 @@
           <query>
           | where appName="Oracle Forms 12: TOSCA"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed 
           | search Speed="*"
           </query>
@@ -908,7 +896,8 @@
           <query>
           | where title="Oracle Forms 12: TOSCA" 
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -988,7 +977,7 @@
           <query>
           | where appName="Adobe Experience Manager"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -1015,7 +1004,7 @@
           <query>
           | where appName="Adobe Experience Manager"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -1072,7 +1061,7 @@
           <query>
           | where appName="ORDS"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -1099,7 +1088,7 @@
           <query>
           | where appName="ORDS"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed 
           | search Speed="*"
           </query>
@@ -1156,7 +1145,7 @@
           <query>
           | where application="Oracle Forms 12" OR application="Forms"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -1183,7 +1172,7 @@
           <query>
           | where application="Oracle Forms 12" OR application="Forms"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -1210,7 +1199,8 @@
           <query>
           | where title="Oracle Forms 12" 
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
           </query>
         </search>
         <option name="colorBy">trend</option>
@@ -1289,7 +1279,7 @@
           <query>
           | where appName="CCD"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability 
           | search Reliability="*"
           </query>
@@ -1317,7 +1307,7 @@
           | where appName="CCD"
           | fields * 
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -1344,7 +1334,8 @@
           <query>
           | where title="CCD" 
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -1395,7 +1386,7 @@
           <query>
           | where appName="CCSS"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -1422,7 +1413,7 @@
           <query>
           | where appName="CCSS"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -1444,30 +1435,9 @@
       </single>
     </panel>
     <panel>
-      <single>
-        <search base="availability">
-          <query>
-          | where title="CCSS"
-          | timechart
-            avg(availability) as Availability
-            by title
-          </query>
-        </search>
-        <option name="colorBy">trend</option>
-        <option name="colorMode">none</option>
-        <option name="drilldown">none</option>
-        <option name="height">50</option>
-        <option name="numberPrecision">0.00</option>
-        <option name="rangeColors">["0xdc4e41", "0xf1813f", "0xf8be34", "0x53a051"]</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="showTrendIndicator">1</option>
-        <option name="trendColorInterpretation">standard</option>
-        <option name="trendDisplayMode">absolute</option>
-        <option name="trendInterval">-15m</option>
-        <option name="unit">%</option>
-        <option name="unitPosition">after</option>
-        <option name="useColors">1</option>
-      </single>
+      <html>
+        <p class="dashes">--</p>
+      </html>
     </panel>
   </row>
   <row>
@@ -1500,7 +1470,7 @@
           <query>
           | where appName="CDDS"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -1527,7 +1497,7 @@
           <query>
           | where appName="CDDS"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -1554,7 +1524,8 @@
           <query>
           | where title="CDDS"           
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -1605,7 +1576,7 @@
           <query>
           | where appName="CSO"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -1632,7 +1603,7 @@
           <query>
           | where appName="CSO"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -1659,7 +1630,8 @@
           <query>
           | where title="CSO"           
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -1710,7 +1682,7 @@
           <query>
           | where appName="Courts"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -1738,7 +1710,7 @@
           | where appName="Courts"
           | fields * 
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -1760,30 +1732,9 @@
       </single>
     </panel>
     <panel>
-      <single>
-        <search base="availability">
-          <query>
-          | where title="Courts"           
-          | timechart
-            avg(availability) as Availability
-            by title
-          </query>
-        </search>
-        <option name="colorBy">trend</option>
-        <option name="colorMode">none</option>
-        <option name="drilldown">none</option>
-        <option name="height">50</option>
-        <option name="numberPrecision">0.00</option>
-        <option name="rangeColors">["0xdc4e41", "0xf1813f", "0xf8be34", "0x53a051"]</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="showTrendIndicator">1</option>
-        <option name="trendColorInterpretation">standard</option>
-        <option name="trendDisplayMode">absolute</option>
-        <option name="trendInterval">-15m</option>
-        <option name="unit">%</option>
-        <option name="unitPosition">after</option>
-        <option name="useColors">1</option>
-      </single>
+      <html>
+        <p class="dashes">--</p>
+      </html>
     </panel>
   </row>
   <row>
@@ -1816,7 +1767,7 @@
           <query>
           | where appName="Divorce"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -1843,7 +1794,7 @@
           <query>
           | where appName="Divorce"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -1870,7 +1821,8 @@
           <query>
           | where title="Divorce"           
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -1921,7 +1873,7 @@
           <query>
           | where appName="Filing Assistant"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -1948,7 +1900,7 @@
           <query>
           | where appName="Filing Assistant"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -1975,8 +1927,10 @@
           <query>
           | where title="Filing Assistant" 
           | timechart
+            span=120s
             avg(availability) as Availability
             by title
+          | eval Availability=round(Availability,2)
           </query>
         </search>
         <option name="colorBy">trend</option>
@@ -2026,7 +1980,7 @@
           <query>
           | where appName="JPac"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -2053,7 +2007,7 @@
           <query>
           | where appName="JPac"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -2080,7 +2034,8 @@
           <query>
           | where title="JPac"
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -2131,7 +2086,7 @@
           <query>
           | where appName="Oracle Forms 12: CMS"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -2158,7 +2113,7 @@
           <query>
           | where appName="Oracle Forms 12: CMS"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -2185,7 +2140,8 @@
           <query>
           | where title="Oracle Forms 12: CMS (CORNET)"
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -2236,7 +2192,7 @@
           <query>
             | where appName="Oracle Forms 12: POR"
             | timechart
-              span=60s
+              span=90s
               avg(gradePercent) as Reliability
             | search Reliability="*"
           </query>
@@ -2263,7 +2219,7 @@
           <query>
             | where appName="Oracle Forms 12: POR"
             | timechart
-              span=60s
+              span=90s
               avg(speedPercent) as Speed
             | search Speed="*"
           </query>
@@ -2290,7 +2246,8 @@
           <query>
           | where title="Oracle Forms 12: POR" 
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -2341,7 +2298,7 @@
           <query>
           | where appName="Oracle Forms 12: SCMS"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -2368,7 +2325,7 @@
           <query>
             | where appName="Oracle Forms 12: SCMS"
             | timechart
-              span=60s
+              span=90s
               avg(speedPercent) as Speed
             | search Speed="*"
           </query>
@@ -2395,7 +2352,8 @@
           <query>
           | where title="Oracle Forms 12: SCMS"
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -2446,7 +2404,7 @@
           <query>
           | where appName="Oracle Forms 12: TABS"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -2473,7 +2431,7 @@
           <query>
           | where appName="Oracle Forms 12: TABS"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -2500,7 +2458,8 @@
           <query>
           | where title="Oracle Forms 12: TABS" 
           | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -2580,7 +2539,7 @@
           <query>
           | where appName="CRC"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -2607,7 +2566,7 @@
           <query>
           | where appName="CRC"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -2634,7 +2593,8 @@
           <query>
             | where title="CRC" 
             | timechart
-            avg(availability) as Availability
+            span=120s
+            latest(availability) as Availability
             by title
           </query>
         </search>
@@ -2685,7 +2645,7 @@
           <query>
           | where appName="Community Safety"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability 
           | search Reliability="*"
           </query>
@@ -2712,7 +2672,7 @@
           <query>
           | where appName="Community Safety"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>
@@ -2769,7 +2729,7 @@
           <query>
           | where appName="Protection Order"
           | timechart
-            span=60s
+            span=90s
             avg(gradePercent) as Reliability
           | search Reliability="*"
           </query>
@@ -2796,7 +2756,7 @@
           <query>
           | where appName="Protection Order"
           | timechart
-            span=60s
+            span=90s
             avg(speedPercent) as Speed
           | search Speed="*"
           </query>

@@ -1,326 +1,373 @@
 <form theme="dark">
-    <search id="diskUsage">
-      <query>
-        index="main" host IN ($dynamicsCRMFE$ $dynamicsCRMBE$ $dynamicsSQLServer$ $sharepointSQLServer$ $sharepoint$) sourcetype="WinHostMon" source="disk" FileSystem="*" DriveType="*" Type="Disk" 
-        | fields *
-      </query>
-      <earliest>$timeRange.earliest$</earliest>
-      <latest>$timeRange.latest$</latest>
-    </search>
-    <label>ECM Dynamics Ops</label>
-    <fieldset submitButton="false">
-      <input type="time" token="timeRange" searchWhenChanged="true">
-        <label>Time Range</label>
-        <default>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
-        </default>
-      </input>
-      <input type="checkbox" token="dynamicsCRMFE">
-        <label>Dynamics CRM Frontend</label>
-        <choice value="kindness">kindness</choice>
-        <choice value="giving">giving</choice>
-        <default>kindness,giving</default>
-        <initialValue>kindness,giving</initialValue>
-        <delimiter> </delimiter>
-      </input>
-      <input type="checkbox" token="dynamicsCRMBE">
-        <label>Dynamics CRM Backend</label>
-        <choice value="lavish">lavish</choice>
-        <choice value="profuse">profuse</choice>
-        <default>lavish,profuse</default>
-        <initialValue>lavish,profuse</initialValue>
-        <delimiter> </delimiter>
-      </input>
-      <input type="checkbox" token="dynamicsSQLServer">
-        <label>Dynamics SQLServer</label>
-        <choice value="loyal">loyal</choice>
-        <choice value="devotion">devotion</choice>
-        <default>loyal,devotion</default>
-        <initialValue>loyal,devotion</initialValue>
-        <delimiter> </delimiter>
-      </input>
-      <input type="checkbox" token="sharepointSQLServer">
-        <label>Sharepoint SQLServer</label>
-        <choice value="abundant">abundant</choice>
-        <choice value="generous">generous</choice>
-        <default>abundant</default>
-        <initialValue>abundant</initialValue>
-        <delimiter> </delimiter>
-      </input>
-      <input type="checkbox" token="sharepoint">
-        <label>Sharepoint</label>
-        <choice value="fertile">fertile</choice>
-        <choice value="proliferate">proliferate</choice>
-        <default>fertile,proliferate</default>
-        <initialValue>fertile,proliferate</initialValue>
-      </input>
-    </fieldset>
-    <row>
-      <panel>
-        <title>CPU Usage</title>
-        <chart>
-          <search>
-            <query>
-  index="main" host IN ($dynamicsCRMFE$ $dynamicsCRMBE$ $dynamicsSQLServer$ $sharepointSQLServer$ $sharepoint$) sourcetype="Perfmon:CPU Load" 
-  | table _time Value host
-  | timechart max(Value) as CPULoad by host</query>
-            <earliest>$timeRange.earliest$</earliest>
-            <latest>$timeRange.latest$</latest>
-            <sampleRatio>1</sampleRatio>
-          </search>
-          <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-          <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-          <option name="charting.axisTitleX.visibility">collapsed</option>
-          <option name="charting.axisTitleY.visibility">collapsed</option>
-          <option name="charting.axisTitleY2.visibility">visible</option>
-          <option name="charting.axisX.abbreviation">none</option>
-          <option name="charting.axisX.scale">linear</option>
-          <option name="charting.axisY.abbreviation">none</option>
-          <option name="charting.axisY.scale">linear</option>
-          <option name="charting.axisY2.abbreviation">none</option>
-          <option name="charting.axisY2.enabled">0</option>
-          <option name="charting.axisY2.scale">inherit</option>
-          <option name="charting.chart">line</option>
-          <option name="charting.chart.bubbleMaximumSize">50</option>
-          <option name="charting.chart.bubbleMinimumSize">10</option>
-          <option name="charting.chart.bubbleSizeBy">area</option>
-          <option name="charting.chart.nullValueMode">connect</option>
-          <option name="charting.chart.showDataLabels">none</option>
-          <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-          <option name="charting.chart.stackMode">default</option>
-          <option name="charting.chart.style">shiny</option>
-          <option name="charting.drilldown">none</option>
-          <option name="charting.layout.splitSeries">0</option>
-          <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-          <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-          <option name="charting.legend.mode">standard</option>
-          <option name="charting.legend.placement">bottom</option>
-          <option name="charting.lineWidth">2</option>
-          <option name="refresh.display">progressbar</option>
-          <option name="trellis.enabled">0</option>
-          <option name="trellis.scales.shared">1</option>
-          <option name="trellis.size">medium</option>
-        </chart>
-      </panel>
-    </row>
-    <row>
-      <panel>
-        <title>Available memory</title>
-        <chart>
-          <search>
-            <query>
-  index="main" host IN ($dynamicsCRMFE$ $dynamicsCRMBE$ $dynamicsSQLServer$ $sharepointSQLServer$ $sharepoint$) sourcetype="Perfmon:Available Memory" Value="*" 
-  | eval memoryFree=round(Value/(1024*1024*1024),2)
-  | table _time memoryFree host
-  | timechart max(memoryFree) as "Free Memory (GiBs)" by host</query>
-            <earliest>$timeRange.earliest$</earliest>
-            <latest>$timeRange.latest$</latest>
-            <sampleRatio>1</sampleRatio>
-          </search>
-          <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-          <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-          <option name="charting.axisTitleX.visibility">collapsed</option>
-          <option name="charting.axisTitleY.visibility">collapsed</option>
-          <option name="charting.axisTitleY2.visibility">visible</option>
-          <option name="charting.axisX.abbreviation">none</option>
-          <option name="charting.axisX.scale">linear</option>
-          <option name="charting.axisY.abbreviation">none</option>
-          <option name="charting.axisY.scale">linear</option>
-          <option name="charting.axisY2.abbreviation">none</option>
-          <option name="charting.axisY2.enabled">0</option>
-          <option name="charting.axisY2.scale">inherit</option>
-          <option name="charting.chart">line</option>
-          <option name="charting.chart.bubbleMaximumSize">50</option>
-          <option name="charting.chart.bubbleMinimumSize">10</option>
-          <option name="charting.chart.bubbleSizeBy">area</option>
-          <option name="charting.chart.nullValueMode">connect</option>
-          <option name="charting.chart.showDataLabels">none</option>
-          <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-          <option name="charting.chart.stackMode">default</option>
-          <option name="charting.chart.style">shiny</option>
-          <option name="charting.drilldown">none</option>
-          <option name="charting.layout.splitSeries">0</option>
-          <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-          <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-          <option name="charting.legend.mode">standard</option>
-          <option name="charting.legend.placement">bottom</option>
-          <option name="charting.lineWidth">2</option>
-          <option name="refresh.display">progressbar</option>
-          <option name="trellis.enabled">0</option>
-          <option name="trellis.scales.shared">1</option>
-          <option name="trellis.size">medium</option>
-        </chart>
-      </panel>
-    </row>
-    <row>
-      <panel>
-        <title>Disk usage (%)</title>
-        <chart>
-          <search base="diskUsage">
-            <query>| eval UsedSpacePct=round(100*(TotalSpaceKB-FreeSpaceKB)/TotalSpaceKB) 
-  | table _time UsedSpacePct Name host
-  | eval hostName=host." (".Name.")"
-  | timechart span=600s max(UsedSpacePct) as DiskSpace by hostName useother=false</query>
-          </search>
-          <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-          <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-          <option name="charting.axisTitleX.visibility">collapsed</option>
-          <option name="charting.axisTitleY.visibility">collapsed</option>
-          <option name="charting.axisTitleY2.visibility">visible</option>
-          <option name="charting.axisX.abbreviation">none</option>
-          <option name="charting.axisX.scale">linear</option>
-          <option name="charting.axisY.abbreviation">none</option>
-          <option name="charting.axisY.maximumNumber">125</option>
-          <option name="charting.axisY.minimumNumber">0</option>
-          <option name="charting.axisY.scale">linear</option>
-          <option name="charting.axisY2.abbreviation">none</option>
-          <option name="charting.axisY2.enabled">0</option>
-          <option name="charting.axisY2.scale">inherit</option>
-          <option name="charting.chart">line</option>
-          <option name="charting.chart.bubbleMaximumSize">50</option>
-          <option name="charting.chart.bubbleMinimumSize">10</option>
-          <option name="charting.chart.bubbleSizeBy">area</option>
-          <option name="charting.chart.nullValueMode">connect</option>
-          <option name="charting.chart.showDataLabels">none</option>
-          <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-          <option name="charting.chart.stackMode">default</option>
-          <option name="charting.chart.style">shiny</option>
-          <option name="charting.drilldown">none</option>
-          <option name="charting.layout.splitSeries">0</option>
-          <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-          <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-          <option name="charting.legend.mode">standard</option>
-          <option name="charting.legend.placement">bottom</option>
-          <option name="charting.lineWidth">2</option>
-          <option name="refresh.display">progressbar</option>
-          <option name="trellis.enabled">0</option>
-          <option name="trellis.scales.shared">1</option>
-          <option name="trellis.size">medium</option>
-        </chart>
-      </panel>
-    </row>
-    <row>
-      <panel>
-        <title>Disk I/O</title>
-        <viz type="Splunk_ML_Toolkit.LinesViz">
-          <search>
-            <query>
-              index="main" host IN ($dynamicsCRMFE$ $dynamicsCRMBE$ $dynamicsSQLServer$ $sharepointSQLServer$ $sharepoint$) sourcetype="PerfmonMk:PhysicalDisk" instance="_Total" 
-  | rename 
-      "Disk_Read_Bytes/sec" AS Disk_Read_Bytes_sec,
-      "Disk_Write_Bytes/sec" AS Disk_Write_Bytes_sec 
-  | eval Disk_Read_KBytes_sec = round(Disk_Read_Bytes_sec/(1024),2) 
-  | eval Disk_Write_KBytes_sec = round(Disk_Write_Bytes_sec/(1024),2) 
-  | table _time Disk_Read_KBytes_sec Disk_Write_KBytes_sec host
-  | timechart max(Disk_Read_KBytes_sec) as "Reads (KB/s)" max(Disk_Write_KBytes_sec) as "Writes (KB/s)" by host
+   <init>
+     <set token="dynamicsCRMFEFilter"> </set>
+   </init>
+  <search id="diskUsage">
+    <query>
+      index IN (perfmon_sql perfmon_ecm) host IN ($dynamicsCRMFEFilter$ $dynamicsCRMBEFilter$ $dynamicsSQLServerFilter$ $sharepointSQLServerFilter$ $sharepointFilter$) sourcetype="WinHostMon" source="disk" FileSystem="*" DriveType="*" Type="Disk" 
+      | fields *
+    </query>
+    <earliest>$timeRange.earliest$</earliest>
+    <latest>$timeRange.latest$</latest>
+  </search>
+  <label>ECM PaaS Ops</label>
+  <fieldset submitButton="false">
+    <input type="time" token="timeRange" searchWhenChanged="true">
+      <label>Time Range</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="checkbox" token="dynamicsCRMFE">
+      <label>Dynamics CRM Frontend</label>
+      <choice value="kindness">kindness</choice>
+      <choice value="giving">giving</choice>
+      <initialValue>kindness,giving</initialValue>
+      <change>
+         <condition>
+           <eval token="dynamicsCRMFEFilter">case(isnull($dynamicsCRMFE$) OR len(trim($dynamicsCRMFE$))=0," ",true(),$dynamicsCRMFE$)</eval>
+         </condition>
+         <condition>
+           <set token="dynamicsCRMFEFilter"> </set>
+         </condition>
+      </change>
+    </input>
+    <input type="checkbox" token="dynamicsCRMBE">
+      <label>Dynamics CRM Backend</label>
+      <choice value="lavish">lavish</choice>
+      <choice value="profuse">profuse</choice>
+      <initialValue>lavish,profuse</initialValue>
+      <change>
+         <condition>
+           <eval token="dynamicsCRMBEFilter">case(isnull($dynamicsCRMBE$) OR len(trim($dynamicsCRMBE$))=0," ",true(),$dynamicsCRMBE$)</eval>
+         </condition>
+         <condition>
+           <set token="dynamicsCRMBEFilter"> </set>
+         </condition>
+      </change>
+    </input>
+    <input type="checkbox" token="dynamicsSQLServer">
+      <label>Dynamics SQLServer</label>
+      <choice value="loyal">loyal</choice>
+      <choice value="devotion">devotion</choice>
+      <initialValue>loyal,devotion</initialValue>
+      <change>
+         <condition>
+           <eval token="dynamicsSQLServerFilter">case(isnull($dynamicsSQLServer$) OR len(trim($dynamicsSQLServer$))=0," ",true(),$dynamicsSQLServer$)</eval>
+         </condition>
+         <condition>
+           <set token="dynamicsSQLServerFilter"> </set>
+         </condition>
+      </change>
+    </input>
+    <input type="checkbox" token="sharepointSQLServer">
+      <label>Sharepoint SQLServer</label>
+      <choice value="abundant">abundant</choice>
+      <choice value="generous">generous</choice>
+      <initialValue>abundant,generous</initialValue>
+      <change>
+         <condition>
+           <eval token="sharepointSQLServerFilter">case(isnull($sharepointSQLServer$) OR len(trim($sharepointSQLServer$))=0," ",true(),$sharepointSQLServer$)</eval>
+         </condition>
+         <condition>
+           <set token="sharepointSQLServerFilter"> </set>
+         </condition>
+      </change>
+    </input>
+    <input type="checkbox" token="sharepoint">
+      <label>Sharepoint</label>
+      <choice value="fertile">fertile</choice>
+      <choice value="proliferate">proliferate</choice>
+      <initialValue>fertile,proliferate</initialValue>
+      <change>
+         <condition>
+           <eval token="sharepointFilter">case(isnull($sharepoint$) OR len(trim($sharepoint$))=0," ",true(),$sharepoint$)</eval>
+         </condition>
+         <condition>
+           <set token="sharepointFilter"> </set>
+         </condition>
+      </change>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>CPU Usage</title>
+      <chart>
+        <search>
+          <query>
+            index IN (perfmon_sql perfmon_ecm) host IN ($dynamicsCRMFEFilter$ $dynamicsCRMBEFilter$ $dynamicsSQLServerFilter$ $sharepointSQLServerFilter$ $sharepointFilter$) sourcetype="Perfmon:CPU Load" 
+            | fields _time Value host
+            | timechart span=15s max(Value) as CPULoad by host
+            | eval Threshold=75
+          </query>
+          <earliest>$timeRange.earliest$</earliest>
+          <latest>$timeRange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.maximumNumber">100</option>
+        <option name="charting.axisY.minimumNumber">0</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Available Memory</title>
+      <chart>
+        <search>
+          <query>
+            index IN (perfmon_sql perfmon_ecm) host IN ($dynamicsCRMFEFilter$ $dynamicsCRMBEFilter$ $dynamicsSQLServerFilter$ $sharepointSQLServerFilter$ $sharepointFilter$) sourcetype="Perfmon:Available Memory" Value="*" 
+            | eval memoryFree=round(Value/(1024*1024*1024),2)
+            | fields _time memoryFree host
+            | timechart span=15s max(memoryFree) as "Free Memory (GiBs)" by host
+          </query>
+          <earliest>$timeRange.earliest$</earliest>
+          <latest>$timeRange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Disk usage (%)</title>
+      <chart>
+        <search base="diskUsage">
+          <query>
+          | eval UsedSpacePct=round(100*(TotalSpaceKB-FreeSpaceKB)/TotalSpaceKB) 
+          | table _time UsedSpacePct Name host
+          | eval hostName=host." (".Name.")"
+          | timechart span=10m max(UsedSpacePct) as DiskSpace by hostName useother=false
+          </query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.maximumNumber">125</option>
+        <option name="charting.axisY.minimumNumber">0</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Disk I/O</title>
+      <viz type="Splunk_ML_Toolkit.LinesViz">
+        <search>
+          <query>
+            index IN (perfmon_sql perfmon_ecm) host IN ($dynamicsCRMFEFilter$ $dynamicsCRMBEFilter$ $dynamicsSQLServerFilter$ $sharepointSQLServerFilter$ $sharepointFilter$) sourcetype="PerfmonMk:PhysicalDisk" instance="_Total" 
+            | rename 
+                "Disk_Read_Bytes/sec" AS Disk_Read_Bytes_sec,
+                "Disk_Write_Bytes/sec" AS Disk_Write_Bytes_sec 
+            | eval Disk_Read_KBytes_sec = round(Disk_Read_Bytes_sec/(1024),2) 
+            | eval Disk_Write_KBytes_sec = round(Disk_Write_Bytes_sec/(1024),2) 
+            | table _time Disk_Read_KBytes_sec Disk_Write_KBytes_sec host
+            | timechart span=15m max(Disk_Read_KBytes_sec) as "Reads (KB/s)" max(Disk_Write_KBytes_sec) as "Writes (KB/s)" by host
+          </query>
+          <earliest>$timeRange.earliest$</earliest>
+          <latest>$timeRange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Network activity</title>
+      <viz type="Splunk_ML_Toolkit.LinesViz">
+        <search>
+          <query>
+            index IN (perfmon_sql perfmon_ecm) host IN ($dynamicsCRMFEFilter$ $dynamicsCRMBEFilter$ $dynamicsSQLServerFilter$ $sharepointSQLServerFilter$ $sharepointFilter$) sourcetype="Perfmon:Network Interface" 
+            | eval KBps=round(Value/(1024),2)
+            | replace "Bytes Received/sec" WITH "Received KB/s", "Bytes Sent/sec" WITH "Sent KB/s"
+            | table _time counter KBps host
+            | timechart span=15s max(KBps) by host
             </query>
-            <earliest>$timeRange.earliest$</earliest>
-            <latest>$timeRange.latest$</latest>
-            <sampleRatio>1</sampleRatio>
-          </search>
-          <option name="drilldown">none</option>
-          <option name="refresh.display">progressbar</option>
-          <option name="trellis.enabled">0</option>
-          <option name="trellis.scales.shared">1</option>
-          <option name="trellis.size">medium</option>
-        </viz>
-      </panel>
-    </row>
-    <row>
-      <panel>
-        <title>Network activity</title>
-        <viz type="Splunk_ML_Toolkit.LinesViz">
-          <search>
-            <query>index="main" host IN ($dynamicsCRMFE$ $dynamicsCRMBE$ $dynamicsSQLServer$ $sharepointSQLServer$ $sharepoint$) sourcetype="Perfmon:Network Interface" 
-  | eval KBps=round(Value/(1024),2)
-  | replace "Bytes Received/sec" WITH "Received KB/s", "Bytes Sent/sec" WITH "Sent KB/s"
-  | table _time counter KBps host
-  | timechart max(KBps) by host</query>
-            <earliest>$timeRange.earliest$</earliest>
-            <latest>$timeRange.latest$</latest>
-            <sampleRatio>1</sampleRatio>
-          </search>
-          <option name="drilldown">none</option>
-          <option name="refresh.display">progressbar</option>
-          <option name="trellis.enabled">0</option>
-          <option name="trellis.scales.shared">1</option>
-          <option name="trellis.size">medium</option>
-        </viz>
-      </panel>
-    </row>
-    <row>
-      <panel>
-        <title>ECM [RAM, CPU, Disk ThroughPut and Disk IO/s]</title>
-        <viz type="horizon_chart_app.horizon_chart">
-          <search>
-            <query>index="main" host IN (kindness giving lavish profuse loyal devotion abundant genereous fertile proliferate) sourcetype="PerfmonMk:Process" 
-  | rename 
-      "IO_Data_Bytes/sec" AS "IO_Data_Bytes_sec", 
-      "IO_Data_Operations/sec" AS "IO_Data_Operations_sec" 
-  | sort -num(process_cpu_used_percent), -num(process_mem_used), -num(IO_Data_Bytes_sec), -num(IO_Data_Operations_sec) 
-  | eval CPU=round(process_cpu_used_percent,2) 
-  | eval Memory=round(process_mem_used/(1024*1024),2) 
-  | eval disk_mb_per_sec=round(IO_Data_Bytes_sec/(1024*1024),2) 
-  | eval disk_iops=round(IO_Data_Operations_sec,2) 
-  | eval hostInstance=host.": ".instance
-  | timechart max(CPU) AS CPU max(Memory) AS RAM max(disk_mb_per_sec) AS diskThroughput max(disk_iops) AS diskIO by hostInstance useother=false
-  | rename
-      CPU AS "CPU (%)"
-      RAM AS "Memory (MB)"
-      diskThroughput AS "Disk (MB/s)"
-      diskIO AS "Disk (IO/s)"</query>
-            <earliest>$timeRange.earliest$</earliest>
-            <latest>$timeRange.latest$</latest>
-            <sampleRatio>1</sampleRatio>
-          </search>
-          <option name="drilldown">none</option>
-          <option name="horizon_chart_app.horizon_chart.negativeColor">#d93f3c</option>
-          <option name="horizon_chart_app.horizon_chart.numBands">10</option>
-          <option name="horizon_chart_app.horizon_chart.positiveColor">#6db7c6</option>
-          <option name="horizon_chart_app.horizon_chart.relative">1</option>
-          <option name="horizon_chart_app.horizon_chart.showChangeInPercent">1</option>
-          <option name="horizon_chart_app.horizon_chart.smoothen">1</option>
-          <option name="trellis.enabled">0</option>
-          <option name="trellis.scales.shared">1</option>
-          <option name="trellis.size">medium</option>
-        </viz>
-      </panel>
-    </row>
-    <row>
-      <panel>
-        <title>Top</title>
-        <table>
-          <search>
-            <query>index="main" host IN (kindness giving lavish profuse loyal devotion abundant genereous fertile proliferate) sourcetype="PerfmonMk:Process" 
-  | rename 
-      "IO_Data_Bytes/sec" AS "IO_Data_Bytes_sec", 
-      "IO_Data_Operations/sec" AS "IO_Data_Operations_sec" 
-  | sort -num(process_cpu_used_percent), -num(process_mem_used), -num(IO_Data_Bytes_sec), -num(IO_Data_Operations_sec) 
-  | eval CPU=round(process_cpu_used_percent,2) 
-  | eval Memory=round(process_mem_used/(1024*1024),2) 
-  | eval disk_mb_per_sec=round(IO_Data_Bytes_sec/(1024*1024),2) 
-  | eval disk_iops=round(IO_Data_Operations_sec,2) 
-  | eval hostInstance=host.": ".instance
-  | timechart max(CPU) AS CPU max(Memory) AS RAM max(disk_mb_per_sec) AS diskThroughput max(disk_iops) AS diskIO by hostInstance useother=false
-  | rename
-      CPU AS "CPU (%)"
-      RAM AS "Memory (MB)"
-      diskThroughput AS "Disk (MB/s)"
-      diskIO AS "Disk (IO/s)"</query>
-            <earliest>$timeRange.earliest$</earliest>
-            <latest>$timeRange.latest$</latest>
-            <sampleRatio>1</sampleRatio>
-          </search>
-          <option name="count">20</option>
-          <option name="dataOverlayMode">none</option>
-          <option name="drilldown">none</option>
-          <option name="percentagesRow">false</option>
-          <option name="refresh.display">progressbar</option>
-          <option name="rowNumbers">false</option>
-          <option name="totalsRow">false</option>
-          <option name="wrap">true</option>
-        </table>
-      </panel>
-    </row>
-  </form>
+          <earliest>$timeRange.earliest$</earliest>
+          <latest>$timeRange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>ECM [RAM, CPU, Disk ThroughPut and Disk IO/s]</title>
+      <viz type="horizon_chart_app.horizon_chart">
+        <search>
+          <query>
+            index IN (perfmon_sql perfmon_ecm) host IN ($dynamicsCRMFEFilter$ $dynamicsCRMBEFilter$ $dynamicsSQLServerFilter$ $sharepointSQLServerFilter$ $sharepointFilter$) sourcetype="PerfmonMk:Process" 
+            | rename 
+                "IO_Data_Bytes/sec" AS "IO_Data_Bytes_sec", 
+                "IO_Data_Operations/sec" AS "IO_Data_Operations_sec" 
+            | sort -num(process_cpu_used_percent), -num(process_mem_used), -num(IO_Data_Bytes_sec), -num(IO_Data_Operations_sec) 
+            | eval CPU=round(process_cpu_used_percent,2) 
+            | eval Memory=round(process_mem_used/(1024*1024),2) 
+            | eval disk_mb_per_sec=round(IO_Data_Bytes_sec/(1024*1024),2) 
+            | eval disk_iops=round(IO_Data_Operations_sec,2) 
+            | eval hostInstance=host.": ".instance
+            | timechart max(CPU) AS CPU max(Memory) AS RAM max(disk_mb_per_sec) AS diskThroughput max(disk_iops) AS diskIO by hostInstance useother=false
+            | rename
+                CPU AS "CPU (%)"
+                RAM AS "Memory (MB)"
+                diskThroughput AS "Disk (MB/s)"
+                diskIO AS "Disk (IO/s)"
+            </query>
+          <earliest>$timeRange.earliest$</earliest>
+          <latest>$timeRange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="horizon_chart_app.horizon_chart.negativeColor">#d93f3c</option>
+        <option name="horizon_chart_app.horizon_chart.numBands">10</option>
+        <option name="horizon_chart_app.horizon_chart.positiveColor">#6db7c6</option>
+        <option name="horizon_chart_app.horizon_chart.relative">1</option>
+        <option name="horizon_chart_app.horizon_chart.showChangeInPercent">1</option>
+        <option name="horizon_chart_app.horizon_chart.smoothen">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Top</title>
+      <table>
+        <search>
+          <query>
+            index IN (perfmon_sql perfmon_ecm) host IN ($dynamicsCRMFEFilter$ $dynamicsCRMBEFilter$ $dynamicsSQLServerFilter$ $sharepointSQLServerFilter$ $sharepointFilter$) sourcetype="PerfmonMk:Process" 
+            | rename 
+                "IO_Data_Bytes/sec" AS "IO_Data_Bytes_sec", 
+                "IO_Data_Operations/sec" AS "IO_Data_Operations_sec" 
+            | sort -num(process_cpu_used_percent), -num(process_mem_used), -num(IO_Data_Bytes_sec), -num(IO_Data_Operations_sec) 
+            | eval CPU=round(process_cpu_used_percent,2) 
+            | eval Memory=round(process_mem_used/(1024*1024),2) 
+            | eval disk_mb_per_sec=round(IO_Data_Bytes_sec/(1024*1024),2) 
+            | eval disk_iops=round(IO_Data_Operations_sec,2) 
+            | eval hostInstance=host.": ".instance
+            | timechart max(CPU) AS CPU max(Memory) AS RAM max(disk_mb_per_sec) AS diskThroughput max(disk_iops) AS diskIO by hostInstance useother=false
+            | rename
+                CPU AS "CPU (%)"
+                RAM AS "Memory (MB)"
+                diskThroughput AS "Disk (MB/s)"
+                diskIO AS "Disk (IO/s)"
+            </query>
+          <earliest>$timeRange.earliest$</earliest>
+          <latest>$timeRange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>
